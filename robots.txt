@@ -12,8 +12,8 @@ Disallow: /.git/
 # Crawl delay (optional - helps prevent server overload)
 # Crawl-delay: 10
 
-# Sitemap location (update this URL to match your domain)
-# Sitemap: https://www.madeteka.com/sitemap.xml
+# Sitemap location
+Sitemap: https://madeteka.com/sitemap.xml
 
 # Popular search engine specific rules
 User-agent: Googlebot

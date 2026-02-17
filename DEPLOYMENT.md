@@ -28,7 +28,7 @@ madeteka-com/
 2. Navigate to **Manage Websites**
 3. Click on your domain (e.g., `madeteka.com`)
 4. Under **Manage Files**, note your FTP credentials:
-   - **FTP Server**: Usually `ftp.yourdomain.com`
+   - **FTP Server**: Usually `ftp.madeteka.com`
    - **Username**: Your Dreamhost username
    - **Port**: 21 (FTP) or 22 (SFTP - recommended)
 
@@ -41,7 +41,7 @@ Use an FTP client like:
 
 #### FileZilla Example:
 ```
-Host: sftp://yourdomain.com
+Host: sftp://madeteka.com
 Username: your_dreamhost_username
 Password: your_dreamhost_password
 Port: 22
@@ -50,7 +50,7 @@ Port: 22
 ### Step 3: Upload Files
 
 1. Connect to your Dreamhost server
-2. Navigate to your domain's web directory (usually `/home/username/yourdomain.com/`)
+2. Navigate to your domain's web directory (usually `/home/username/madeteka.com/`)
 3. Upload the following files:
    - `index.html`
    - `.htaccess`
@@ -62,7 +62,7 @@ Port: 22
 
 ### Step 4: Test Your Site
 
-Visit `https://yourdomain.com` in your browser. You should see the Madeteka website.
+Visit `https://madeteka.com` in your browser. You should see the Madeteka website.
 
 ---
 
@@ -84,13 +84,13 @@ Visit `https://yourdomain.com` in your browser. You should see the Madeteka webs
 ### Step 2: Connect via SSH
 
 ```bash
-ssh your_username@yourdomain.com
+ssh your_username@madeteka.com
 ```
 
 ### Step 3: Navigate to Web Directory
 
 ```bash
-cd ~/yourdomain.com/
+cd ~/madeteka.com/
 ```
 
 ### Step 4: Deploy via Git (Recommended)
@@ -117,19 +117,19 @@ From your local machine:
 
 ```bash
 # Upload files via SCP
-scp index.html your_username@yourdomain.com:~/yourdomain.com/
-scp .htaccess your_username@yourdomain.com:~/yourdomain.com/
-scp robots.txt your_username@yourdomain.com:~/yourdomain.com/
+scp index.html your_username@madeteka.com:~/madeteka.com/
+scp .htaccess your_username@madeteka.com:~/madeteka.com/
+scp robots.txt your_username@madeteka.com:~/madeteka.com/
 ```
 
 ### Step 6: Verify Deployment
 
 ```bash
 # List files to confirm
-ls -la ~/yourdomain.com/
+ls -la ~/madeteka.com/
 
 # Test the site
-curl -I https://yourdomain.com
+curl -I https://madeteka.com
 ```
 
 ---
@@ -143,10 +143,10 @@ For frequent updates, create a deployment script:
 ```bash
 #!/bin/bash
 
-# Configuration
-REMOTE_USER="your_dreamhost_username"
-REMOTE_HOST="yourdomain.com"
-REMOTE_DIR="~/yourdomain.com"
+# Configuration for madeteka.com
+REMOTE_USER="your_dreamhost_username"  # Replace with your Dreamhost username
+REMOTE_HOST="madeteka.com"
+REMOTE_DIR="~/madeteka.com"
 
 # Deploy files
 echo "Deploying to Dreamhost..."
@@ -158,7 +158,7 @@ echo "Setting permissions..."
 ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DIR} && chmod 644 index.html .htaccess robots.txt"
 
 echo "Deployment complete!"
-echo "Visit: https://yourdomain.com"
+echo "Visit: https://madeteka.com"
 ```
 
 Make it executable:
@@ -216,7 +216,7 @@ DNS propagation can take 24-48 hours.
 ```bash
 # Fix file permissions
 chmod 644 index.html
-chmod 755 ~/yourdomain.com
+chmod 755 ~/madeteka.com
 ```
 
 ### Issue: .htaccess Not Working
@@ -274,8 +274,8 @@ Regular backups are automatic on Dreamhost, but you can also:
 
 ```bash
 # Manual backup via SSH
-ssh your_username@yourdomain.com
-cd ~/yourdomain.com/
+ssh your_username@madeteka.com
+cd ~/madeteka.com/
 tar -czf backup-$(date +%Y%m%d).tar.gz index.html .htaccess robots.txt
 ```
 
@@ -293,11 +293,11 @@ tar -czf backup-$(date +%Y%m%d).tar.gz index.html .htaccess robots.txt
 
 | Task | Command |
 |------|---------|
-| Connect via SSH | `ssh username@yourdomain.com` |
-| Navigate to web dir | `cd ~/yourdomain.com` |
-| Upload via SCP | `scp index.html username@yourdomain.com:~/yourdomain.com/` |
+| Connect via SSH | `ssh username@madeteka.com` |
+| Navigate to web dir | `cd ~/madeteka.com` |
+| Upload via SCP | `scp index.html username@madeteka.com:~/madeteka.com/` |
 | Set permissions | `chmod 644 index.html` |
-| Test site | `curl -I https://yourdomain.com` |
+| Test site | `curl -I https://madeteka.com` |
 
 ---
 
