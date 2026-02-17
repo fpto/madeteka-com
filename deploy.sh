@@ -16,8 +16,8 @@
 # ========================================
 
 # Configuration
-REMOTE_USER="fabricio.puerto@outlook.com"
-REMOTE_HOST="madeteka.com"
+REMOTE_USER="dh_hp47dm"
+REMOTE_HOST="pdx1-shared-a4-07.dreamhost.com"
 REMOTE_DIR="madeteka.com"  # Web directory on Dreamhost
 
 # Colors for output
