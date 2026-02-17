@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madeteka | Artesanía en Caoba</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Quicksand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#2D4221',    // Deep Forest Green
+                        gold: '#C5A059',      // Golden Sap
+                        mahogany: '#4A2C2A',  // Deep Mahogany
+                        parchment: '#F5F2E9', // Soft Parchment
+                        olive: '#5E6B56',     // Slate Olive
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('https://images.unsplash.com/photo-1481277542470-605612bd2d61?q=80&w=2069&auto=format&fit=crop')",
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #F5F2E9;
+            color: #2D4221;
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        // --- Inline Icons to prevent external dependency errors ---
+        const IconBase = ({ size = 24, className = "", children }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className={className}
+            >
+                {children}
+            </svg>
+        );
+
+        const Menu = (props) => (
+            <IconBase {...props}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></IconBase>
+        );
+        const X = (props) => (
+            <IconBase {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></IconBase>
+        );
+        const ChevronRight = (props) => (
+            <IconBase {...props}><path d="m9 18 6-6-6-6"/></IconBase>
+        );
+        const Globe = (props) => (
+            <IconBase {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></IconBase>
+        );
+        const Phone = (props) => (
+            <IconBase {...props}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></IconBase>
+        );
+        const Mail = (props) => (
+            <IconBase {...props}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></IconBase>
+        );
+        const Instagram = (props) => (
+            <IconBase {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></IconBase>
+        );
+        const ArrowRight = (props) => (
+            <IconBase {...props}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></IconBase>
+        );
+        const ShieldCheck = (props) => (
+            <IconBase {...props}><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></IconBase>
+        );
+        const Hammer = (props) => (
+            <IconBase {...props}><path d="m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9"/><path d="m18 15 4-4"/><path d="m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V2h-3v6.172a2 2 0 0 1-.586 1.414L12 12"/></IconBase>
+        );
+        const Clock = (props) => (
+            <IconBase {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></IconBase>
+        );
+        const WhatsAppIcon = (props) => (
+            <IconBase {...props}><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" /></IconBase>
+        );
+
+        // Content Dictionary
+        const content = {
+            es: {
+                nav: {
+                    collection: "Colección",
+                    process: "Proceso",
+                    philosophy: "Filosofía",
+                    contact: "Contacto",
+                },
+                hero: {
+                    title: "La entrada a su legado.",
+                    subtitle: "Puertas de caoba premium. Artesanía eterna, diseñada para una vida de tranquilidad.",
+                    cta: "Ver Colección"
+                },
+                values: {
+                    title: "La Diferencia Madeteka",
+                    v1_title: "Artesanía Inquebrantable",
+                    v1_desc: "Cada pieza es seleccionada a mano y tallada con precisión milimétrica.",
+                    v2_title: "Durabilidad Silenciosa",
+                    v2_desc: "Ingeniería robusta que perdura generaciones sin exigir atención.",
+                    v3_desc: "Experiencia Sin Estrés",
+                    v3_desc_text: "Desde el diseño hasta la instalación, nosotros nos encargamos de todo."
+                },
+                showcase: {
+                    title: "Nuestra Selección",
+                    items: [
+                        { 
+                            name: "Toscana", 
+                            desc: "Elegancia mediterránea, calidez y tradición.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Toscana.jpg" 
+                        },
+                        { 
+                            name: "Tokio", 
+                            desc: "Vanguardia minimalista, diseño que respira.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Tokio.jpg" 
+                        },
+                        { 
+                            name: "Moscú", 
+                            desc: "Solidez imperial, protección absoluta.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Moscu.jpg" 
+                        },
+                        { 
+                            name: "Kioto", 
+                            desc: "Armonía zen, belleza en el detalle.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Kioto.jpg" 
+                        },
+                        { 
+                            name: "Bali", 
+                            desc: "Exotismo natural, conexión con lo orgánico.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Bali.jpg" 
+                        }
+                    ]
+                },
+                process: {
+                    title: "Su camino hacia la excelencia",
+                    steps: [
+                        { title: "1. Consulta", desc: "Entendemos su visión y espacio." },
+                        { title: "2. Creación", desc: "Nuestros maestros artesanos inician el trabajo." },
+                        { title: "3. Instalación", desc: "Entrega impecable, sin residuos, sin ruido." }
+                    ]
+                },
+                cta_section: {
+                    title: "¿Listo para elevar su espacio?",
+                    desc: "Hablemos hoy. Sin compromisos, solo claridad.",
+                    btn: "Escríbenos"
+                },
+                footer: {
+                    rights: "Todos los derechos reservados."
+                }
+            },
+            en: {
+                nav: {
+                    collection: "Collection",
+                    process: "Process",
+                    philosophy: "Philosophy",
+                    contact: "Contact",
+                },
+                hero: {
+                    title: "The entrance to your legacy.",
+                    subtitle: "Premium mahogany doors. Timeless craftsmanship, designed for a life of tranquility.",
+                    cta: "View Collection"
+                },
+                values: {
+                    title: "The Madeteka Difference",
+                    v1_title: "Unwavering Craftsmanship",
+                    v1_desc: "Every piece is hand-selected and carved with millimeter precision.",
+                    v2_title: "Quiet Durability",
+                    v2_desc: "Robust engineering that lasts generations without demanding attention.",
+                    v3_desc: "Stress-Free Experience",
+                    v3_desc_text: "From design to installation, we handle absolutely everything."
+                },
+                showcase: {
+                    title: "Our Selection",
+                    items: [
+                        { 
+                            name: "Toscana", 
+                            desc: "Mediterranean elegance, warmth and tradition.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Toscana.jpg" 
+                        },
+                        { 
+                            name: "Tokio", 
+                            desc: "Minimalist avant-garde, design that breathes.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Tokio.jpg" 
+                        },
+                        { 
+                            name: "Moscow", 
+                            desc: "Imperial solidity, absolute protection.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Moscu.jpg" 
+                        },
+                        { 
+                            name: "Kyoto", 
+                            desc: "Zen harmony, beauty in the detail.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Kioto.jpg" 
+                        },
+                        { 
+                            name: "Bali", 
+                            desc: "Natural exoticism, connection to the organic.", 
+                            img: "https://www.novacasahn.com/wp-content/uploads/2026/01/Bali.jpg" 
+                        }
+                    ]
+                },
+                process: {
+                    title: "Your path to excellence",
+                    steps: [
+                        { title: "1. Consultation", desc: "We understand your vision and space." },
+                        { title: "2. Creation", desc: "Our master craftsmen begin their work." },
+                        { title: "3. Installation", desc: "Flawless delivery. No mess, no noise." }
+                    ]
+                },
+                cta_section: {
+                    title: "Ready to elevate your space?",
+                    desc: "Let's talk today. No pressure, just clarity.",
+                    btn: "Message Us"
+                },
+                footer: {
+                    rights: "All rights reserved."
+                }
+            }
+        };
+
+        const App = () => {
+            const [lang, setLang] = useState('es');
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [scrolled, setScrolled] = useState(false);
+
+            const t = content[lang];
+
+            // Handle Scroll for Navbar styling
+            useEffect(() => {
+                const handleScroll = () => {
+                    setScrolled(window.scrollY > 50);
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            // Icons rendering helper
+            const Icon = ({ icon: IconComponent, size = 24, className }) => {
+                if (!IconComponent) return null;
+                return <IconComponent size={size} className={className} />;
+            };
+
+            const toggleLang = () => {
+                setLang(prev => prev === 'es' ? 'en' : 'es');
+                setIsMenuOpen(false); // Close mobile menu on switch
+            };
+
+            return (
+                <div className="font-sans text-forest bg-parchment overflow-x-hidden selection:bg-gold selection:text-white">
+                    
+                    {/* Navigation */}
+                    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-parchment/95 shadow-sm py-4' : 'bg-transparent py-6'}`}>
+                        <div className="container mx-auto px-6 flex justify-between items-center">
+                            {/* Logo */}
+                            <a href="#" className="block w-48">
+                                <img 
+                                    src={scrolled 
+                                        ? "https://www.novacasahn.com/wp-content/uploads/2026/01/Logo-horizontal-Madeteka-1.png" 
+                                        : "https://www.novacasahn.com/wp-content/uploads/2026/01/Logo-horizontal-Madeteka.png"
+                                    }
+                                    alt="Madeteka" 
+                                    className={`w-full h-auto transition-all duration-300 ${scrolled ? '' : 'brightness-0 invert'}`} 
+                                />
+                            </a>
+
+                            {/* Desktop Menu */}
+                            <div className="hidden md:flex items-center space-x-8">
+                                <a href="#collection" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.collection}</a>
+                                <a href="#process" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.process}</a>
+                                <a href="#philosophy" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.philosophy}</a>
+                                <a href="#contact" className={`px-5 py-2 border transition-all rounded-full text-sm font-semibold ${scrolled ? 'border-forest text-forest hover:bg-forest hover:text-parchment' : 'border-parchment text-parchment hover:bg-parchment hover:text-forest'}`}>
+                                    {t.nav.contact}
+                                </a>
+                                
+                                {/* Language Toggle */}
+                                <button onClick={toggleLang} className={`flex items-center space-x-1 transition-colors ${scrolled ? 'text-olive' : 'text-parchment'} hover:text-gold`}>
+                                    <Icon icon={Globe} size={18} />
+                                    <span className="text-sm font-semibold">{lang.toUpperCase()}</span>
+                                </button>
+                            </div>
+
+                            {/* Mobile Menu Button */}
+                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`md:hidden ${scrolled ? 'text-forest' : 'text-parchment'}`}>
+                                <Icon icon={isMenuOpen ? X : Menu} size={28} />
+                            </button>
+                        </div>
+
+                        {/* Mobile Dropdown */}
+                        {isMenuOpen && (
+                            <div className="absolute top-full left-0 w-full bg-parchment shadow-lg md:hidden flex flex-col items-center py-8 space-y-6 border-t border-olive/10">
+                                <a href="#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.collection}</a>
+                                <a href="#process" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.process}</a>
+                                <a href="#philosophy" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.philosophy}</a>
+                                <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gold">{t.nav.contact}</a>
+                                <button onClick={toggleLang} className="flex items-center space-x-2 text-olive border px-4 py-1 rounded-full border-olive/30">
+                                    <Icon icon={Globe} size={16} />
+                                    <span>{lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}</span>
+                                </button>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* Hero Section */}
+                    <header className="relative min-h-screen flex items-center justify-center overflow-hidden">
+                        {/* Background Image with Overlay */}
+                        <div className="absolute inset-0 z-0">
+                             <img 
+                                src="https://images.unsplash.com/photo-1481277542470-605612bd2d61?q=80&w=2069&auto=format&fit=crop" 
+                                alt="Mahogany Door Texture" 
+                                className="w-full h-full object-cover"
+                                onError={(e) => {e.target.style.display='none'; e.target.parentElement.style.backgroundColor='#2D4221'}}
+                            />
+                            <div className="absolute inset-0 bg-forest/80 mix-blend-multiply"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-forest/90 to-transparent"></div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="relative z-10 container mx-auto px-6 text-center pt-20">
+                            <h1 className="text-5xl md:text-7xl font-light text-parchment mb-6 leading-tight fade-in" style={{animationDelay: '0.2s'}}>
+                                {t.hero.title}
+                            </h1>
+                            <p className="text-lg md:text-xl text-parchment/80 max-w-2xl mx-auto mb-10 font-light fade-in" style={{animationDelay: '0.4s'}}>
+                                {t.hero.subtitle}
+                            </p>
+                            <a href="#collection" className="inline-flex items-center space-x-2 bg-gold text-forest px-8 py-4 rounded-full font-semibold hover:bg-white hover:scale-105 transition-all duration-300 fade-in shadow-lg shadow-gold/20" style={{animationDelay: '0.6s'}}>
+                                <span>{t.hero.cta}</span>
+                                <Icon icon={ChevronRight} size={20} />
+                            </a>
+                        </div>
+                    </header>
+
+                    {/* Values / Philosophy Section */}
+                    <section id="philosophy" className="py-24 bg-parchment">
+                        <div className="container mx-auto px-6">
+                            <div className="text-center mb-20">
+                                <h2 className="text-3xl md:text-4xl font-light text-forest mb-4">{t.values.title}</h2>
+                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                            </div>
+
+                            <div className="grid md:grid-cols-3 gap-12">
+                                {/* Value 1 */}
+                                <a href="#contact" className="group block text-center p-6 border border-transparent hover:border-olive/10 hover:bg-white rounded-2xl transition-all duration-500 cursor-pointer">
+                                    <div className="w-14 h-14 mx-auto bg-forest/5 rounded-full flex items-center justify-center text-forest mb-6 group-hover:bg-forest group-hover:text-gold transition-colors">
+                                        <Icon icon={Hammer} size={24} />
+                                    </div>
+                                    <h3 className="text-xl font-semibold mb-3">{t.values.v1_title}</h3>
+                                    <p className="text-olive leading-relaxed text-sm md:text-base">
+                                        {t.values.v1_desc}
+                                    </p>
+                                </a>
+
+                                {/* Value 2 */}
+                                <a href="#contact" className="group block text-center p-6 border border-transparent hover:border-olive/10 hover:bg-white rounded-2xl transition-all duration-500 cursor-pointer">
+                                    <div className="w-14 h-14 mx-auto bg-forest/5 rounded-full flex items-center justify-center text-forest mb-6 group-hover:bg-forest group-hover:text-gold transition-colors">
+                                        <Icon icon={ShieldCheck} size={24} />
+                                    </div>
+                                    <h3 className="text-xl font-semibold mb-3">{t.values.v2_title}</h3>
+                                    <p className="text-olive leading-relaxed text-sm md:text-base">
+                                        {t.values.v2_desc}
+                                    </p>
+                                </a>
+
+                                {/* Value 3 */}
+                                <a href="#contact" className="group block text-center p-6 border border-transparent hover:border-olive/10 hover:bg-white rounded-2xl transition-all duration-500 cursor-pointer">
+                                    <div className="w-14 h-14 mx-auto bg-forest/5 rounded-full flex items-center justify-center text-forest mb-6 group-hover:bg-forest group-hover:text-gold transition-colors">
+                                        <Icon icon={Clock} size={24} />
+                                    </div>
+                                    <h3 className="text-xl font-semibold mb-3">{t.values.v3_desc}</h3>
+                                    <p className="text-olive leading-relaxed text-sm md:text-base">
+                                        {t.values.v3_desc_text}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Product Showcase */}
+                    <section id="collection" className="py-24 bg-forest text-parchment">
+                        <div className="container mx-auto px-6">
+                            <div className="flex flex-col md:flex-row justify-between items-end mb-16">
+                                <div>
+                                    <span className="text-gold font-bold tracking-widest text-xs uppercase mb-2 block">{content[lang].nav.collection}</span>
+                                    <h2 className="text-3xl md:text-4xl font-light">{t.showcase.title}</h2>
+                                </div>
+                                <button className="hidden md:flex items-center space-x-2 text-gold hover:text-white transition-colors mt-4 md:mt-0">
+                                    <span>Instagram</span>
+                                    <Icon icon={ArrowRight} size={16} />
+                                </button>
+                            </div>
+
+                            <div className="flex flex-wrap justify-center gap-8">
+                                {t.showcase.items.map((item, index) => (
+                                    <a href="#contact" key={index} className="group block cursor-pointer w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-2rem)]">
+                                        <div className="relative overflow-hidden rounded-lg aspect-[3/4] mb-6">
+                                            <img 
+                                                src={item.img} 
+                                                alt={item.name} 
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                                onError={(e) => {e.target.style.display='none'; e.target.parentElement.style.backgroundColor='#2D4221'}}
+                                            />
+                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
+                                        </div>
+                                        <h3 className="text-xl font-medium mb-1">{item.name}</h3>
+                                        <p className="text-olive text-sm">{item.desc}</p>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Process Section */}
+                    <section id="process" className="py-24 bg-white">
+                         <div className="container mx-auto px-6 max-w-4xl">
+                            <h2 className="text-3xl md:text-4xl font-light text-forest text-center mb-16">{t.process.title}</h2>
+                            
+                            <div className="space-y-12">
+                                {t.process.steps.map((step, index) => (
+                                    <div key={index} className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left group">
+                                        <div className="flex-shrink-0 w-12 h-12 rounded-full border border-gold text-gold flex items-center justify-center font-bold text-lg mb-4 md:mb-0 md:mr-8 group-hover:bg-gold group-hover:text-white transition-all">
+                                            {index + 1}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-semibold text-forest mb-2">{step.title}</h3>
+                                            <p className="text-olive leading-relaxed">{step.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                         </div>
+                    </section>
+
+                    {/* Contact / CTA */}
+                    <section id="contact" className="py-24 bg-parchment relative overflow-hidden">
+                        {/* Decorative Circle */}
+                        <div className="absolute -right-20 -top-20 w-64 h-64 bg-gold/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -left-20 bottom-0 w-96 h-96 bg-forest/5 rounded-full blur-3xl"></div>
+
+                        <div className="container mx-auto px-6 relative z-10 text-center">
+                            <h2 className="text-4xl md:text-5xl font-light text-forest mb-6">{t.cta_section.title}</h2>
+                            <p className="text-xl text-olive mb-10 max-w-xl mx-auto">{t.cta_section.desc}</p>
+                            
+                            <div className="flex justify-center items-center">
+                                <a 
+                                    href="https://wa.me/50499127863?text=Hola,%20hola.%20Vi%20su%20pagina.%20Estoy%20interesado%20en%20una%20puerta." 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="bg-forest text-white px-10 py-5 rounded-full font-semibold hover:bg-mahogany transition-colors shadow-lg flex items-center space-x-3 w-full md:w-auto justify-center text-lg"
+                                >
+                                    <Icon icon={WhatsAppIcon} size={24} />
+                                    <span>{t.cta_section.btn}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="bg-forest text-parchment/60 py-12 border-t border-parchment/10">
+                        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div className="w-40">
+                                <img 
+                                    src="https://www.novacasahn.com/wp-content/uploads/2026/01/Logo-horizontal-Madeteka.png" 
+                                    alt="Madeteka" 
+                                    className="w-full h-auto brightness-0 invert opacity-90" 
+                                />
+                            </div>
+                            
+                            <div className="flex space-x-6 text-sm font-medium">
+                                <a href="https://instagram.com" target="_blank" className="hover:text-gold transition-colors">Instagram</a>
+                                <a href="https://facebook.com" target="_blank" className="hover:text-gold transition-colors">Facebook</a>
+                                <a href="https://wa.me/50499127863" target="_blank" className="hover:text-gold transition-colors">WhatsApp</a>
+                            </div>
+
+                            <div className="text-xs">
+                                &copy; {new Date().getFullYear()} Madeteka. {t.footer.rights}
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
