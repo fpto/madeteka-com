@@ -1,0 +1,33 @@
+# Madeteka - Robots.txt
+# SEO Configuration for Search Engine Crawlers
+
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Disallow access to sensitive directories (if any exist in the future)
+Disallow: /cgi-bin/
+Disallow: /.git/
+
+# Crawl delay (optional - helps prevent server overload)
+# Crawl-delay: 10
+
+# Sitemap location
+Sitemap: https://madeteka.com/sitemap.xml
+
+# Popular search engine specific rules
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block bad bots (optional)
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
