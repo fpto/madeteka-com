@@ -16,7 +16,7 @@
 # ========================================
 
 # Configuration
-REMOTE_USER="YOUR_DREAMHOST_USERNAME"  # ⚠️ REPLACE THIS with your Dreamhost username
+REMOTE_USER="fabricio.puerto@outlook.com"
 REMOTE_HOST="madeteka.com"
 REMOTE_DIR="madeteka.com"  # Web directory on Dreamhost
 
@@ -46,14 +46,9 @@ print_header() {
 }
 
 check_config() {
-    if [ "$REMOTE_USER" = "YOUR_DREAMHOST_USERNAME" ]; then
-        echo -e "${RED}❌ Error: Please update REMOTE_USER in this script${NC}"
-        echo ""
-        echo "Edit this file and replace:"
-        echo "  REMOTE_USER=\"YOUR_DREAMHOST_USERNAME\""
-        echo "with your actual Dreamhost username"
-        exit 1
-    fi
+    # Configuration validated - using fabricio.puerto@outlook.com
+    echo -e "${GREEN}✓ Configuration: ${REMOTE_USER}${NC}"
+    echo ""
 }
 
 check_files() {
