@@ -26,11 +26,19 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Deployment files
-FILES=(
+# Required files
+REQUIRED_FILES=(
     "index.html"
-    ".htaccess"
-    "robots.txt"
+)
+
+# Rsync exclusions (files/folders that should not be deployed)
+RSYNC_EXCLUDES=(
+    ".git/"
+    ".github/"
+    "deploy.sh"
+    "DEPLOYMENT.md"
+    "README.md"
+    "*.md"
 )
 
 # ========================================
@@ -53,7 +61,7 @@ check_config() {
 
 check_files() {
     echo -e "${YELLOW}🔍 Checking files...${NC}"
-    for file in "${FILES[@]}"; do
+    for file in "${REQUIRED_FILES[@]}"; do
         if [ ! -f "$file" ]; then
             echo -e "${RED}❌ Error: $file not found${NC}"
             exit 1
@@ -76,27 +84,27 @@ test_connection() {
 }
 
 deploy_files() {
-    echo -e "${YELLOW}📤 Deploying files to Dreamhost...${NC}"
+    echo -e "${YELLOW}📤 Deploying website files (including new folders)...${NC}"
 
-    for file in "${FILES[@]}"; do
-        echo -e "${YELLOW}  Uploading $file...${NC}"
-        if scp "$file" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"; then
-            echo -e "${GREEN}    ✓ $file uploaded${NC}"
-        else
-            echo -e "${RED}    ❌ Failed to upload $file${NC}"
-            exit 1
-        fi
+    RSYNC_ARGS=("-avz" "--progress")
+    for exclude in "${RSYNC_EXCLUDES[@]}"; do
+        RSYNC_ARGS+=("--exclude=${exclude}")
     done
+
+    if rsync "${RSYNC_ARGS[@]}" ./ "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"; then
+        echo -e "${GREEN}  ✓ Deployment sync completed${NC}"
+    else
+        echo -e "${RED}  ❌ Deployment sync failed${NC}"
+        exit 1
+    fi
     echo ""
 }
 
 set_permissions() {
     echo -e "${YELLOW}🔒 Setting file permissions...${NC}"
 
-    FILE_LIST="${FILES[*]}"
-
-    if ssh "${REMOTE_USER}@${REMOTE_HOST}" "cd ${REMOTE_DIR} && chmod 644 ${FILE_LIST}"; then
-        echo -e "${GREEN}  ✓ Permissions set (644)${NC}"
+    if ssh "${REMOTE_USER}@${REMOTE_HOST}" "cd ${REMOTE_DIR} && find . -type d -exec chmod 755 {} + && find . -type f -exec chmod 644 {} +"; then
+        echo -e "${GREEN}  ✓ Permissions set (dirs 755, files 644)${NC}"
     else
         echo -e "${RED}  ❌ Failed to set permissions${NC}"
         exit 1
@@ -107,9 +115,9 @@ set_permissions() {
 verify_deployment() {
     echo -e "${YELLOW}✅ Verifying deployment...${NC}"
 
-    if ssh "${REMOTE_USER}@${REMOTE_HOST}" "cd ${REMOTE_DIR} && ls -lh ${FILES[*]}"; then
+    if ssh "${REMOTE_USER}@${REMOTE_HOST}" "cd ${REMOTE_DIR} && ls -lah"; then
         echo ""
-        echo -e "${GREEN}  ✓ Files verified on server${NC}"
+        echo -e "${GREEN}  ✓ Deployment verified on server${NC}"
     else
         echo -e "${RED}  ❌ Verification failed${NC}"
         exit 1
