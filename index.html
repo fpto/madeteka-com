@@ -66,6 +66,8 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
+
+        const INSTAGRAM_URL = "https://www.instagram.com/lamadeteka/";
         
         // --- Inline Icons to prevent external dependency errors ---
         const IconBase = ({ size = 24, className = "", children }) => (
@@ -427,10 +429,10 @@
                                     <span className="text-gold font-bold tracking-widest text-xs uppercase mb-2 block">{content[lang].nav.collection}</span>
                                     <h2 className="text-3xl md:text-4xl font-light">{t.showcase.title}</h2>
                                 </div>
-                                <button className="hidden md:flex items-center space-x-2 text-gold hover:text-white transition-colors mt-4 md:mt-0">
+                                <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hidden md:flex items-center space-x-2 text-gold hover:text-white transition-colors mt-4 md:mt-0">
                                     <span>Instagram</span>
                                     <Icon icon={ArrowRight} size={16} />
-                                </button>
+                                </a>
                             </div>
 
                             <div className="flex flex-wrap justify-center gap-8">
@@ -497,7 +499,7 @@
                             </div>
                             
                             <div className="flex space-x-6 text-sm font-medium">
-                                <a href="https://www.instagram.com/lamadeteka/" target="_blank" className="hover:text-gold transition-colors">Instagram</a>
+                                <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">Instagram</a>
                                 <a href="http://facebook.com/lamadeteka" target="_blank" className="hover:text-gold transition-colors">Facebook</a>
                                 <a href="https://wa.me/50499127863" target="_blank" className="hover:text-gold transition-colors">WhatsApp</a>
                             </div>
