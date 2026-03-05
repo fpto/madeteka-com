@@ -130,6 +130,7 @@
                 nav: {
                     collection: "Colección",
                     philosophy: "Filosofía",
+                    pricing: "Precios",
                     contact: "Contacto",
                 },
                 hero: {
@@ -176,6 +177,17 @@
                         }
                     ]
                 },
+                pricing: {
+                    title: "Precios",
+                    subtitle: "Ahorre más al ordenar en volumen",
+                    includes: "Todos los precios incluyen instalación, juego de mocheta y contramarco en el casco urbano de San Pedro Sula.",
+                    tiers: [
+                        { label: "1 Puerta",          price: "L30,000",          unit: "por unidad", cta: "Ordenar",  custom: false },
+                        { label: "2 – 5 Puertas",     price: "L25,000",          unit: "por unidad", cta: "Ordenar",  custom: false },
+                        { label: "5 – 10 Puertas",    price: "L22,500",          unit: "por unidad", cta: "Ordenar",  custom: false },
+                        { label: "Más de 10 Puertas", price: "Precio especial",  unit: "cotización a la medida", cta: "Consultar", custom: true }
+                    ]
+                },
                 cta_section: {
                     title: "¿Listo para elevar su espacio?",
                     desc: "Hablemos hoy. Sin compromisos, solo claridad.",
@@ -184,8 +196,7 @@
                     offer: {
                         title: "Información de compra",
                         items: [
-                            "Precio: Todas las puertas tienen un precio de L25,000.",
-                            "El precio incluye instalación en el caso urbano de San Pedro Sula.",
+                            "El precio incluye instalación, juego de mocheta y contramarco en el casco urbano de San Pedro Sula.",
                             "Tiempo de entrega estimado: 1 mes.",
                             "Tamaño estándar de las puertas: 36\" de ancho x 80\" de alto."
                         ]
@@ -200,6 +211,7 @@
                 nav: {
                     collection: "Collection",
                     philosophy: "Philosophy",
+                    pricing: "Pricing",
                     contact: "Contact",
                 },
                 hero: {
@@ -246,6 +258,17 @@
                         }
                     ]
                 },
+                pricing: {
+                    title: "Pricing",
+                    subtitle: "Save more when you order in volume",
+                    includes: "All prices include installation, mocheta trim set, and door frame within the urban area of San Pedro Sula.",
+                    tiers: [
+                        { label: "1 Door",       price: "L30,000",       unit: "per unit", cta: "Order",   custom: false },
+                        { label: "2 – 5 Doors",  price: "L25,000",       unit: "per unit", cta: "Order",   custom: false },
+                        { label: "5 – 10 Doors", price: "L22,500",       unit: "per unit", cta: "Order",   custom: false },
+                        { label: "10+ Doors",    price: "Custom pricing", unit: "tailored quote", cta: "Inquire", custom: true }
+                    ]
+                },
                 cta_section: {
                     title: "Ready to elevate your space?",
                     desc: "Let's talk today. No pressure, just clarity.",
@@ -254,8 +277,7 @@
                 offer: {
                     title: "Purchase Information",
                     items: [
-                        "Price: All doors are priced at L25,000.",
-                        "The price includes installation within the urban area of San Pedro Sula.",
+                        "The price includes installation, mocheta trim set, and door frame within the urban area of San Pedro Sula.",
                         "Estimated delivery time: 1 month."
                     ]
                 },
@@ -316,6 +338,7 @@
                             <div className="hidden md:flex items-center space-x-8">
                                 <a href="#collection" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.collection}</a>
                                 <a href="#philosophy" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.philosophy}</a>
+                                <a href="#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.pricing}</a>
                                 <a href="#contact" className={`px-5 py-2 border transition-all rounded-full text-sm font-semibold ${scrolled ? 'border-forest text-forest hover:bg-forest hover:text-parchment' : 'border-parchment text-parchment hover:bg-parchment hover:text-forest'}`}>
                                     {t.nav.contact}
                                 </a>
@@ -338,6 +361,7 @@
                             <div className="absolute top-full left-0 w-full bg-parchment shadow-lg md:hidden flex flex-col items-center py-8 space-y-6 border-t border-olive/10">
                                 <a href="#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.collection}</a>
                                 <a href="#philosophy" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.philosophy}</a>
+                                <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.pricing}</a>
                                 <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gold">{t.nav.contact}</a>
                                 <button onClick={toggleLang} className="flex items-center space-x-2 text-olive border px-4 py-1 rounded-full border-olive/30">
                                     <Icon icon={Globe} size={16} />
@@ -452,6 +476,37 @@
                                     </a>
                                 ))}
                             </div>
+                        </div>
+                    </section>
+
+                    {/* Pricing Section */}
+                    <section id="pricing" className="py-24 bg-parchment">
+                        <div className="container mx-auto px-6">
+                            <div className="text-center mb-16">
+                                <span className="text-gold font-bold tracking-widest text-xs uppercase mb-2 block">{t.nav.pricing}</span>
+                                <h2 className="text-3xl md:text-4xl font-light text-forest mb-4">{t.pricing.title}</h2>
+                                <p className="text-olive">{t.pricing.subtitle}</p>
+                                <div className="w-16 h-0.5 bg-gold mx-auto mt-4"></div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                                {t.pricing.tiers.map((tier, index) => (
+                                    <a
+                                        key={index}
+                                        href="#contact"
+                                        className={`group flex flex-col items-center text-center p-8 rounded-2xl border transition-all duration-300 hover:scale-105 hover:shadow-xl ${tier.custom ? 'bg-forest text-parchment border-forest' : 'bg-white border-olive/20 hover:border-gold'}`}
+                                    >
+                                        <p className={`text-xs font-bold tracking-widest uppercase mb-4 ${tier.custom ? 'text-gold' : 'text-olive'}`}>{tier.label}</p>
+                                        <p className={`text-2xl md:text-3xl font-semibold mb-1 ${tier.custom ? 'text-parchment' : 'text-forest'}`}>{tier.price}</p>
+                                        <p className={`text-xs mb-6 ${tier.custom ? 'text-parchment/60' : 'text-olive'}`}>{tier.unit}</p>
+                                        <span className={`mt-auto inline-block px-5 py-2 rounded-full text-sm font-semibold transition-colors ${tier.custom ? 'bg-gold text-forest group-hover:bg-white' : 'bg-forest/5 text-forest group-hover:bg-forest group-hover:text-parchment'}`}>
+                                            {tier.cta}
+                                        </span>
+                                    </a>
+                                ))}
+                            </div>
+
+                            <p className="text-center text-olive text-sm mt-10 max-w-xl mx-auto">{t.pricing.includes}</p>
                         </div>
                     </section>
 
