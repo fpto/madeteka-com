@@ -150,30 +150,35 @@
                 showcase: {
                     title: "Nuestra Selección",
                     items: [
-                        { 
-                            name: "Toscana", 
-                            desc: "Elegancia mediterránea, calidez y tradición.", 
-                            img: "./Modelos-Alfa-Madeteka/Toscana.jpeg" 
+                        {
+                            id: "MK-ALFA-001",
+                            name: "Toscana",
+                            desc: "Elegancia mediterránea, calidez y tradición.",
+                            img: "./Modelos-Alfa-Madeteka/Toscana.jpeg"
                         },
-                        { 
-                            name: "Tokio", 
-                            desc: "Vanguardia minimalista, diseño que respira.", 
-                            img: "./Modelos-Alfa-Madeteka/Tokio.jpeg" 
+                        {
+                            id: "MK-ALFA-002",
+                            name: "Tokio",
+                            desc: "Vanguardia minimalista, diseño que respira.",
+                            img: "./Modelos-Alfa-Madeteka/Tokio.jpeg"
                         },
-                        { 
-                            name: "Moscú", 
-                            desc: "Solidez imperial, protección absoluta.", 
-                            img: "./Modelos-Alfa-Madeteka/Moscu.jpg" 
+                        {
+                            id: "MK-ALFA-003",
+                            name: "Moscú",
+                            desc: "Solidez imperial, protección absoluta.",
+                            img: "./Modelos-Alfa-Madeteka/Moscu.jpg"
                         },
-                        { 
-                            name: "Kioto", 
-                            desc: "Armonía zen, belleza en el detalle.", 
-                            img: "./Modelos-Alfa-Madeteka/Kioto.jpeg" 
+                        {
+                            id: "MK-ALFA-004",
+                            name: "Kioto",
+                            desc: "Armonía zen, belleza en el detalle.",
+                            img: "./Modelos-Alfa-Madeteka/Kioto.jpeg"
                         },
-                        { 
-                            name: "Bali", 
-                            desc: "Exotismo natural, conexión con lo orgánico.", 
-                            img: "./Modelos-Alfa-Madeteka/Bali.jpg" 
+                        {
+                            id: "MK-ALFA-005",
+                            name: "Bali",
+                            desc: "Exotismo natural, conexión con lo orgánico.",
+                            img: "./Modelos-Alfa-Madeteka/Bali.jpg"
                         }
                     ]
                 },
@@ -231,30 +236,35 @@
                 showcase: {
                     title: "Our Selection",
                     items: [
-                        { 
-                            name: "Toscana", 
-                            desc: "Mediterranean elegance, warmth and tradition.", 
-                            img: "./Modelos-Alfa-Madeteka/Toscana.jpeg" 
+                        {
+                            id: "MK-ALFA-001",
+                            name: "Toscana",
+                            desc: "Mediterranean elegance, warmth and tradition.",
+                            img: "./Modelos-Alfa-Madeteka/Toscana.jpeg"
                         },
-                        { 
-                            name: "Tokio", 
-                            desc: "Minimalist avant-garde, design that breathes.", 
-                            img: "./Modelos-Alfa-Madeteka/Tokio.jpeg" 
+                        {
+                            id: "MK-ALFA-002",
+                            name: "Tokio",
+                            desc: "Minimalist avant-garde, design that breathes.",
+                            img: "./Modelos-Alfa-Madeteka/Tokio.jpeg"
                         },
-                        { 
-                            name: "Moscow", 
-                            desc: "Imperial solidity, absolute protection.", 
-                            img: "./Modelos-Alfa-Madeteka/Moscu.jpg" 
+                        {
+                            id: "MK-ALFA-003",
+                            name: "Moscow",
+                            desc: "Imperial solidity, absolute protection.",
+                            img: "./Modelos-Alfa-Madeteka/Moscu.jpg"
                         },
-                        { 
-                            name: "Kyoto", 
-                            desc: "Zen harmony, beauty in the detail.", 
-                            img: "./Modelos-Alfa-Madeteka/Kioto.jpeg" 
+                        {
+                            id: "MK-ALFA-004",
+                            name: "Kyoto",
+                            desc: "Zen harmony, beauty in the detail.",
+                            img: "./Modelos-Alfa-Madeteka/Kioto.jpeg"
                         },
-                        { 
-                            name: "Bali", 
-                            desc: "Natural exoticism, connection to the organic.", 
-                            img: "./Modelos-Alfa-Madeteka/Bali.jpg" 
+                        {
+                            id: "MK-ALFA-005",
+                            name: "Bali",
+                            desc: "Natural exoticism, connection to the organic.",
+                            img: "./Modelos-Alfa-Madeteka/Bali.jpg"
                         }
                     ]
                 },
@@ -460,8 +470,8 @@
                             </div>
 
                             <div className="flex flex-wrap justify-center gap-8">
-                                {t.showcase.items.map((item, index) => (
-                                    <a href="#contact" key={index} className="group block cursor-pointer w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-2rem)]">
+                                {t.showcase.items.map((item) => (
+                                    <a href="#contact" key={item.id} className="group block cursor-pointer w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-2rem)]">
                                         <div className="relative overflow-hidden rounded-lg aspect-[3/4] mb-6">
                                             <img 
                                                 src={item.img} 
@@ -471,6 +481,7 @@
                                             />
                                             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
                                         </div>
+                                        <p className="text-olive/60 text-xs font-mono mb-1">{item.id}</p>
                                         <h3 className="text-xl font-medium mb-1">{item.name}</h3>
                                         <p className="text-olive text-sm">{item.desc}</p>
                                     </a>
