@@ -96,6 +96,9 @@
         const ChevronRight = (props) => (
             <IconBase {...props}><path d="m9 18 6-6-6-6"/></IconBase>
         );
+        const ChevronDown = (props) => (
+            <IconBase {...props}><path d="m6 9 6 6 6-6"/></IconBase>
+        );
         const Globe = (props) => (
             <IconBase {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></IconBase>
         );
@@ -131,6 +134,7 @@
                     collection: "Colección",
                     philosophy: "Filosofía",
                     pricing: "Precios",
+                    faq: "Preguntas",
                     contact: "Contacto",
                 },
                 hero: {
@@ -201,6 +205,39 @@
                             "Tamaño estándar de las puertas: 36\" de ancho x 80\" de alto (0.91 m x 2.03 m)."
                         ]
                     },
+                faq: {
+                    title: "Preguntas Frecuentes",
+                    items: [
+                        {
+                            q: "¿Dónde están ubicados?",
+                            a: "Nuestra sala de ventas está ubicada en Local 11, Plaza Mahanaim, Sector Palenque, San Pedro Sula, Honduras. La fabricación se realiza en Olanchito, Yoro, bajo supervisión directa de nuestro equipo.",
+                            mapLink: "https://maps.app.goo.gl/n2KNMR9Vh57kZ3rn9",
+                            mapLabel: "Ver en Google Maps"
+                        },
+                        {
+                            q: "Me gustaría visitarlos. ¿Cómo puedo hacerlo?",
+                            a: "Con gusto le atendemos en nuestra sala de ventas. Solo atendemos por cita previa — agende su visita en el siguiente enlace:",
+                            calLink: "https://calendly.com/madeteka/visita",
+                            calLabel: "Agendar visita"
+                        },
+                        {
+                            q: "¿Cuáles son los precios?",
+                            a: "Nuestras puertas de caoba hondureña tienen un precio regular de L 30,000. Durante este mes contamos con un precio especial de L 25,000 por puertas del tamaño estándar. El precio incluye contramarco y mochetas. Manejamos un esquema de anticipo al confirmar el pedido y saldo contra entrega."
+                        },
+                        {
+                            q: "¿El precio incluye contramarco y mochetas?",
+                            a: "Sí. Todas nuestras puertas se entregan con contramarco y mochetas de caoba incluidos. El precio que le cotizamos es el precio completo, listo para instalar."
+                        },
+                        {
+                            q: "¿Qué tamaño tienen las puertas?",
+                            a: "Nuestro tamaño estándar es 36\" de ancho × 80\" de alto (0.91 m × 2.03 m)."
+                        },
+                        {
+                            q: "¿Pueden fabricar una puerta de medida específica?",
+                            a: "Sí, fabricamos puertas a la medida. Escríbanos con las medidas, el modelo de su preferencia y la cantidad de puertas que necesita. En 3 días hábiles le enviamos su cotización."
+                        }
+                    ]
+                },
                 footer: {
                     rights: "Todos los derechos reservados.",
                     office_label: "Oficina:",
@@ -212,6 +249,7 @@
                     collection: "Collection",
                     philosophy: "Philosophy",
                     pricing: "Pricing",
+                    faq: "FAQ",
                     contact: "Contact",
                 },
                 hero: {
@@ -282,6 +320,39 @@
                         "Standard door size: 36\" wide x 80\" high (0.91 m x 2.03 m)."
                     ]
                 },
+                faq: {
+                    title: "Frequently Asked Questions",
+                    items: [
+                        {
+                            q: "Where are you located?",
+                            a: "Our showroom is located at Local 11, Plaza Mahanaim, Sector Palenque, San Pedro Sula, Honduras. Manufacturing takes place in Olanchito, Yoro, under the direct supervision of our team.",
+                            mapLink: "https://maps.app.goo.gl/n2KNMR9Vh57kZ3rn9",
+                            mapLabel: "View on Google Maps"
+                        },
+                        {
+                            q: "I'd like to visit. How can I do that?",
+                            a: "We'd be happy to welcome you at our showroom. We only attend by appointment — schedule your visit at the following link:",
+                            calLink: "https://calendly.com/madeteka/visita",
+                            calLabel: "Schedule a visit"
+                        },
+                        {
+                            q: "What are your prices?",
+                            a: "Our Honduran mahogany doors have a regular price of L 30,000. This month we have a special price of L 25,000 for standard-sized doors. The price includes door frame and trim. We work with a deposit upon order confirmation and balance upon delivery."
+                        },
+                        {
+                            q: "Does the price include the door frame and trim?",
+                            a: "Yes. All our doors are delivered with mahogany door frame and mocheta trim included. The price we quote is the complete price, ready to install."
+                        },
+                        {
+                            q: "What size are the doors?",
+                            a: "Our standard size is 36\" wide × 80\" tall (0.91 m × 2.03 m)."
+                        },
+                        {
+                            q: "Can you make a custom-sized door?",
+                            a: "Yes, we manufacture custom-sized doors. Send us your measurements, preferred model, and the number of doors you need. We'll send you a quote within 3 business days."
+                        }
+                    ]
+                },
                 footer: {
                     rights: "All rights reserved.",
                     office_label: "Office:",
@@ -294,6 +365,7 @@
             const [lang, setLang] = useState('es');
             const [isMenuOpen, setIsMenuOpen] = useState(false);
             const [scrolled, setScrolled] = useState(false);
+            const [openFaq, setOpenFaq] = useState(null);
 
             const t = content[lang];
 
@@ -340,6 +412,7 @@
                                 <a href="#collection" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.collection}</a>
                                 <a href="#philosophy" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.philosophy}</a>
                                 <a href="#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.pricing}</a>
+                                <a href="#faq" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.faq}</a>
                                 <a href="#contact" className={`px-5 py-2 border transition-all rounded-full text-sm font-semibold ${scrolled ? 'border-forest text-forest hover:bg-forest hover:text-parchment' : 'border-parchment text-parchment hover:bg-parchment hover:text-forest'}`}>
                                     {t.nav.contact}
                                 </a>
@@ -363,6 +436,7 @@
                                 <a href="#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.collection}</a>
                                 <a href="#philosophy" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.philosophy}</a>
                                 <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.pricing}</a>
+                                <a href="#faq" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.faq}</a>
                                 <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gold">{t.nav.contact}</a>
                                 <button onClick={toggleLang} className="flex items-center space-x-2 text-olive border px-4 py-1 rounded-full border-olive/30">
                                     <Icon icon={Globe} size={16} />
@@ -508,6 +582,46 @@
                             </div>
 
                             <p className="text-center text-olive text-sm mt-10 max-w-xl mx-auto">{t.pricing.includes}</p>
+                        </div>
+                    </section>
+
+                    {/* FAQ Section */}
+                    <section id="faq" className="py-24 bg-forest text-parchment">
+                        <div className="container mx-auto px-6">
+                            <div className="text-center mb-16">
+                                <span className="text-gold font-bold tracking-widest text-xs uppercase mb-2 block">{t.nav.faq}</span>
+                                <h2 className="text-3xl md:text-4xl font-light mb-4">{t.faq.title}</h2>
+                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                            </div>
+
+                            <div className="max-w-3xl mx-auto space-y-4">
+                                {t.faq.items.map((item, index) => (
+                                    <div key={index} className="border border-parchment/20 rounded-xl overflow-hidden">
+                                        <button
+                                            onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                                            className="w-full flex justify-between items-center p-6 text-left hover:bg-parchment/5 transition-colors"
+                                        >
+                                            <span className="text-lg font-medium pr-4">{item.q}</span>
+                                            <Icon icon={ChevronDown} size={20} className={`text-gold flex-shrink-0 transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`} />
+                                        </button>
+                                        {openFaq === index && (
+                                            <div className="px-6 pb-6 text-parchment/80 leading-relaxed">
+                                                <p>{item.a}</p>
+                                                {item.mapLink && (
+                                                    <a href={item.mapLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-gold hover:text-white transition-colors font-semibold">
+                                                        {item.mapLabel} →
+                                                    </a>
+                                                )}
+                                                {item.calLink && (
+                                                    <a href={item.calLink} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-gold hover:text-white transition-colors font-semibold">
+                                                        {item.calLabel} →
+                                                    </a>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </section>
 
