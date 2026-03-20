@@ -417,7 +417,7 @@
                                 <a href="#philosophy" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.philosophy}</a>
                                 <a href="#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.pricing}</a>
                                 <a href="#faq" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.faq}</a>
-                                <a href="./cotizar.html" className={`px-5 py-2 bg-gold text-forest rounded-full text-sm font-semibold hover:bg-white hover:scale-105 transition-all shadow-sm`}>
+                                <a href="./cotizar" className={`px-5 py-2 bg-gold text-forest rounded-full text-sm font-semibold hover:bg-white hover:scale-105 transition-all shadow-sm`}>
                                     {t.nav.quote}
                                 </a>
                                 <a href="#contact" className={`px-5 py-2 border transition-all rounded-full text-sm font-semibold ${scrolled ? 'border-forest text-forest hover:bg-forest hover:text-parchment' : 'border-parchment text-parchment hover:bg-parchment hover:text-forest'}`}>
@@ -444,7 +444,7 @@
                                 <a href="#philosophy" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.philosophy}</a>
                                 <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.pricing}</a>
                                 <a href="#faq" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.faq}</a>
-                                <a href="./cotizar.html" className="text-lg font-semibold text-gold">{t.nav.quote}</a>
+                                <a href="./cotizar" className="text-lg font-semibold text-gold">{t.nav.quote}</a>
                                 <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.contact}</a>
                                 <button onClick={toggleLang} className="flex items-center space-x-2 text-olive border px-4 py-1 rounded-full border-olive/30">
                                     <Icon icon={Globe} size={16} />
@@ -662,7 +662,7 @@
                                     <span>{t.cta_section.btn}</span>
                                 </a>
                                 <a
-                                    href="./cotizar.html"
+                                    href="./cotizar"
                                     className="border-2 border-forest text-forest px-10 py-5 rounded-full font-semibold hover:bg-forest hover:text-white transition-colors shadow-lg flex items-center space-x-3 w-full sm:w-auto justify-center text-lg"
                                 >
                                     <Icon icon={ArrowRight} size={20} />

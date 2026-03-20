@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotizar | Madeteka · Artesanía en Caoba</title>
-    <link rel="icon" type="image/png" href="./Logos/Logo-Color-Madeteka-Favicon.png">
+    <link rel="icon" type="image/png" href="/Logos/Logo-Color-Madeteka-Favicon.png">
 
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -72,11 +72,11 @@
         // MODELOS DE PUERTA
         // ─────────────────────────────────────────────
         const DOOR_MODELS = [
-            { id: 'toscana', name: 'Toscana', desc_es: 'Elegancia mediterránea, calidez y tradición.', desc_en: 'Mediterranean elegance, warmth and tradition.', img: './Modelos-Alfa-Madeteka/Toscana.jpeg' },
-            { id: 'tokio', name: 'Tokio', desc_es: 'Vanguardia minimalista, diseño que respira.', desc_en: 'Minimalist avant-garde, design that breathes.', img: './Modelos-Alfa-Madeteka/Tokio.jpeg' },
-            { id: 'moscu', name: 'Moscú', desc_es: 'Solidez imperial, protección absoluta.', desc_en: 'Imperial solidity, absolute protection.', img: './Modelos-Alfa-Madeteka/Moscu.jpg' },
-            { id: 'kioto', name: 'Kioto', desc_es: 'Armonía zen, belleza en el detalle.', desc_en: 'Zen harmony, beauty in the detail.', img: './Modelos-Alfa-Madeteka/Kioto.jpeg' },
-            { id: 'bali', name: 'Bali', desc_es: 'Exotismo natural, conexión con lo orgánico.', desc_en: 'Natural exoticism, connection to the organic.', img: './Modelos-Alfa-Madeteka/Bali.jpg' },
+            { id: 'toscana', name: 'Toscana', desc_es: 'Elegancia mediterránea, calidez y tradición.', desc_en: 'Mediterranean elegance, warmth and tradition.', img: '/Modelos-Alfa-Madeteka/Toscana.jpeg' },
+            { id: 'tokio', name: 'Tokio', desc_es: 'Vanguardia minimalista, diseño que respira.', desc_en: 'Minimalist avant-garde, design that breathes.', img: '/Modelos-Alfa-Madeteka/Tokio.jpeg' },
+            { id: 'moscu', name: 'Moscú', desc_es: 'Solidez imperial, protección absoluta.', desc_en: 'Imperial solidity, absolute protection.', img: '/Modelos-Alfa-Madeteka/Moscu.jpg' },
+            { id: 'kioto', name: 'Kioto', desc_es: 'Armonía zen, belleza en el detalle.', desc_en: 'Zen harmony, beauty in the detail.', img: '/Modelos-Alfa-Madeteka/Kioto.jpeg' },
+            { id: 'bali', name: 'Bali', desc_es: 'Exotismo natural, conexión con lo orgánico.', desc_en: 'Natural exoticism, connection to the organic.', img: '/Modelos-Alfa-Madeteka/Bali.jpg' },
         ];
 
         // ─────────────────────────────────────────────
@@ -881,11 +881,11 @@
         const Navbar = ({ lang, toggleLang, scrolled, isMenuOpen, setIsMenuOpen, t }) => (
             <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-parchment/95 shadow-sm py-4' : 'bg-forest py-4'}`}>
                 <div className="container mx-auto px-6 flex justify-between items-center">
-                    <a href="./index.html" className="block w-48">
+                    <a href="/" className="block w-48">
                         <img
                             src={scrolled
-                                ? "./Logos/Logo-Horizontal-Color-Madeteka.png"
-                                : "./Logos/Logo-Horizontal-Blanco-Madeteka.png"
+                                ? "/Logos/Logo-Horizontal-Color-Madeteka.png"
+                                : "/Logos/Logo-Horizontal-Blanco-Madeteka.png"
                             }
                             alt="Madeteka"
                             className={`w-full h-auto transition-all duration-300 ${scrolled ? '' : 'brightness-0 invert'}`}
@@ -893,11 +893,11 @@
                     </a>
 
                     <div className="hidden md:flex items-center space-x-8">
-                        <a href="./index.html" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav_home}</a>
-                        <a href="./index.html#collection" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>
+                        <a href="/" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav_home}</a>
+                        <a href="/#collection" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>
                             {lang === 'es' ? 'Colección' : 'Collection'}
                         </a>
-                        <a href="./index.html#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>
+                        <a href="/#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>
                             {lang === 'es' ? 'Precios' : 'Pricing'}
                         </a>
                         <span className={`${scrolled ? 'text-gold' : 'text-gold'} font-semibold text-sm tracking-wide`}>{t.nav_quote}</span>
@@ -914,8 +914,8 @@
 
                 {isMenuOpen && (
                     <div className="absolute top-full left-0 w-full bg-parchment shadow-lg md:hidden flex flex-col items-center py-8 space-y-6 border-t border-olive/10">
-                        <a href="./index.html" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav_home}</a>
-                        <a href="./index.html#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{lang === 'es' ? 'Colección' : 'Collection'}</a>
+                        <a href="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav_home}</a>
+                        <a href="/#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{lang === 'es' ? 'Colección' : 'Collection'}</a>
                         <span className="text-lg font-medium text-gold">{t.nav_quote}</span>
                         <button onClick={toggleLang} className="flex items-center space-x-2 text-olive border px-4 py-1 rounded-full border-olive/30">
                             <Icon icon={GlobeIcon} size={16} />
@@ -930,7 +930,7 @@
             <footer className="bg-forest text-parchment/60 py-12 border-t border-parchment/10">
                 <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="w-40">
-                        <img src="./Logos/Logo-Horizontal-Blanco-Madeteka.png" alt="Madeteka" className="w-full h-auto brightness-0 invert opacity-90" />
+                        <img src="/Logos/Logo-Horizontal-Blanco-Madeteka.png" alt="Madeteka" className="w-full h-auto brightness-0 invert opacity-90" />
                     </div>
                     <div className="flex space-x-6 text-sm font-medium">
                         <a href="https://www.instagram.com/lamadeteka/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">Instagram</a>
