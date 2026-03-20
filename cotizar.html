@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizar | Madeteka · Artesanía en Caoba</title>
+    <link rel="icon" type="image/png" href="./Logos/Logo-Color-Madeteka-Favicon.png">
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Quicksand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#2D4221',
+                        gold: '#C5A059',
+                        mahogany: '#4A2C2A',
+                        parchment: '#F5F2E9',
+                        olive: '#5E6B56',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F5F2E9;
+            color: #2D4221;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useMemo } = React;
+
+        // ─────────────────────────────────────────────
+        // CONFIGURACIÓN — Reemplazar después de desplegar el Apps Script
+        // ─────────────────────────────────────────────
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbybKvX9ujWW7LJW6iOKT3AQ0WhhH0wcWMMkE80kEU7LnNJwc-iXHrI4Y8i0-X7RjqpWSw/exec';
+
+        // ─────────────────────────────────────────────
+        // MODELOS DE PUERTA
+        // ─────────────────────────────────────────────
+        const DOOR_MODELS = [
+            { id: 'toscana', name: 'Toscana', desc_es: 'Elegancia mediterránea, calidez y tradición.', desc_en: 'Mediterranean elegance, warmth and tradition.', img: './Modelos-Alfa-Madeteka/Toscana.jpeg' },
+            { id: 'tokio', name: 'Tokio', desc_es: 'Vanguardia minimalista, diseño que respira.', desc_en: 'Minimalist avant-garde, design that breathes.', img: './Modelos-Alfa-Madeteka/Tokio.jpeg' },
+            { id: 'moscu', name: 'Moscú', desc_es: 'Solidez imperial, protección absoluta.', desc_en: 'Imperial solidity, absolute protection.', img: './Modelos-Alfa-Madeteka/Moscu.jpg' },
+            { id: 'kioto', name: 'Kioto', desc_es: 'Armonía zen, belleza en el detalle.', desc_en: 'Zen harmony, beauty in the detail.', img: './Modelos-Alfa-Madeteka/Kioto.jpeg' },
+            { id: 'bali', name: 'Bali', desc_es: 'Exotismo natural, conexión con lo orgánico.', desc_en: 'Natural exoticism, connection to the organic.', img: './Modelos-Alfa-Madeteka/Bali.jpg' },
+        ];
+
+        // ─────────────────────────────────────────────
+        // LÓGICA DE COTIZACIÓN
+        // ─────────────────────────────────────────────
+
+        // Boquete estándar en metros
+        const STD_BOQUETE_WIDTH_M = 0.9652;  // 38"
+        const STD_BOQUETE_HEIGHT_M = 2.0574; // 81"
+
+        // Conversiones
+        const INCH_TO_M = 0.0254;
+        const CM_TO_M = 0.01;
+        const M_TO_FT = 1 / 0.3048;
+
+        // Precios estándar por tier
+        const STANDARD_PRICES = [
+            { min: 1, max: 1, price: 30000 },
+            { min: 2, max: 5, price: 25000 },
+            { min: 6, max: 10, price: 22500 },
+            { min: 11, max: Infinity, price: 20000 },
+        ];
+
+        // Factores de margen por tier (costo ÷ factor = precio venta)
+        const MARGIN_FACTORS = [
+            { min: 1, max: 1, factor: 0.5233 },
+            { min: 2, max: 5, factor: 0.628 },
+            { min: 6, max: 10, factor: 0.698 },
+            { min: 11, max: Infinity, factor: 0.785 },
+        ];
+
+        function getTier(totalDoors) {
+            return STANDARD_PRICES.find(t => totalDoors >= t.min && totalDoors <= t.max) || STANDARD_PRICES[3];
+        }
+
+        function getMarginFactor(totalDoors) {
+            return (MARGIN_FACTORS.find(t => totalDoors >= t.min && totalDoors <= t.max) || MARGIN_FACTORS[3]).factor;
+        }
+
+        function boqueteToMeters(value, unit) {
+            if (unit === 'in') return value * INCH_TO_M;
+            if (unit === 'cm') return value * CM_TO_M;
+            return value;
+        }
+
+        function calculateDoorCost(boqueteWidthM, boqueteHeightM) {
+            const doorWidthM = boqueteWidthM - 0.0508;
+            const doorHeightM = boqueteHeightM - 0.0254;
+            const doorWidthFt = doorWidthM * M_TO_FT;
+            const doorHeightFt = doorHeightM * M_TO_FT;
+            const areaM2 = doorWidthM * doorHeightM;
+            const piesTableares = doorWidthFt * doorHeightFt * 2 * 2.25;
+            const costoMadera = piesTableares * 100;
+            const costoManoObra = 3944 + (679 * areaM2);
+            const hardware = 1500;
+            const costoTotal = costoMadera + costoManoObra + hardware;
+
+            return {
+                doorWidthM,
+                doorHeightM,
+                doorWidthFt,
+                doorHeightFt,
+                areaM2,
+                piesTableares: Math.round(piesTableares),
+                costoMadera: Math.round(costoMadera),
+                costoManoObra: Math.round(costoManoObra),
+                hardware,
+                costoTotal: Math.round(costoTotal),
+            };
+        }
+
+        function calculateDoorPrice(door, totalDoors) {
+            if (door.sizeType === 'standard') {
+                return getTier(totalDoors).price;
+            }
+
+            const bwM = boqueteToMeters(parseFloat(door.boqueteAncho) || 0, door.unit);
+            const bhM = boqueteToMeters(parseFloat(door.boqueteAlto) || 0, door.unit);
+
+            if (bwM <= 0.0508 || bhM <= 0.0254) return 0;
+
+            const cost = calculateDoorCost(bwM, bhM);
+            const factor = getMarginFactor(totalDoors);
+            const rawPrice = cost.costoTotal / factor;
+            return Math.round(rawPrice / 500) * 500; // Redondear a L500
+        }
+
+        function getDoorDetails(door) {
+            if (door.sizeType === 'standard') {
+                return {
+                    boqueteWidth: '38" (0.97 m)',
+                    boqueteHeight: '81" (2.06 m)',
+                    doorWidth: '36" (0.91 m)',
+                    doorHeight: '80" (2.03 m)',
+                    areaM2: 1.85,
+                    piesTableares: 90,
+                };
+            }
+
+            const bwM = boqueteToMeters(parseFloat(door.boqueteAncho) || 0, door.unit);
+            const bhM = boqueteToMeters(parseFloat(door.boqueteAlto) || 0, door.unit);
+
+            if (bwM <= 0.0508 || bhM <= 0.0254) return null;
+
+            const cost = calculateDoorCost(bwM, bhM);
+            const unitLabel = door.unit === 'in' ? '"' : ' cm';
+
+            return {
+                boqueteWidth: `${door.boqueteAncho}${unitLabel} (${bwM.toFixed(2)} m)`,
+                boqueteHeight: `${door.boqueteAlto}${unitLabel} (${bhM.toFixed(2)} m)`,
+                doorWidth: `${(cost.doorWidthM / (door.unit === 'in' ? INCH_TO_M : CM_TO_M)).toFixed(1)}${unitLabel} (${cost.doorWidthM.toFixed(2)} m)`,
+                doorHeight: `${(cost.doorHeightM / (door.unit === 'in' ? INCH_TO_M : CM_TO_M)).toFixed(1)}${unitLabel} (${cost.doorHeightM.toFixed(2)} m)`,
+                areaM2: cost.areaM2.toFixed(2),
+                piesTableares: cost.piesTableares,
+            };
+        }
+
+        function formatLempiras(amount) {
+            return 'L ' + amount.toLocaleString('es-HN');
+        }
+
+        // ─────────────────────────────────────────────
+        // ÍCONOS SVG
+        // ─────────────────────────────────────────────
+        const IconBase = ({ size = 24, className = "", children }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const MenuIcon = (props) => (
+            <IconBase {...props}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></IconBase>
+        );
+        const XIcon = (props) => (
+            <IconBase {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></IconBase>
+        );
+        const GlobeIcon = (props) => (
+            <IconBase {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></IconBase>
+        );
+        const PlusIcon = (props) => (
+            <IconBase {...props}><path d="M5 12h14"/><path d="M12 5v14"/></IconBase>
+        );
+        const TrashIcon = (props) => (
+            <IconBase {...props}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></IconBase>
+        );
+        const CheckIcon = (props) => (
+            <IconBase {...props}><path d="M20 6 9 17l-5-5"/></IconBase>
+        );
+        const ArrowLeftIcon = (props) => (
+            <IconBase {...props}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></IconBase>
+        );
+        const SendIcon = (props) => (
+            <IconBase {...props}><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></IconBase>
+        );
+        const WhatsAppIcon = (props) => (
+            <IconBase {...props}><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" /></IconBase>
+        );
+
+        const Icon = ({ icon: IconComponent, size = 24, className }) => {
+            if (!IconComponent) return null;
+            return <IconComponent size={size} className={className} />;
+        };
+
+        // ─────────────────────────────────────────────
+        // CONTENIDO BILINGÜE
+        // ─────────────────────────────────────────────
+        const text = {
+            es: {
+                nav_home: "Inicio",
+                nav_quote: "Cotizar",
+                page_title: "Cotización Personalizada",
+                page_subtitle: "Configure sus puertas y reciba su cotización al instante.",
+                // Customer info
+                section_customer: "Reciba su Cotización",
+                customer_intro: "Ingrese sus datos para recibir su cotización con precios directamente en su correo electrónico.",
+                nombre: "Nombre",
+                apellido: "Apellido",
+                telefono: "Teléfono",
+                email: "Correo electrónico",
+                nombre_ph: "Ingrese su nombre",
+                apellido_ph: "Ingrese su apellido",
+                telefono_ph: "99999999",
+                email_ph: "su@correo.com",
+                // Doors
+                section_doors: "Configure sus Puertas",
+                add_door: "Agregar Otra Puerta",
+                door_ready: "Lista",
+                door_number: "Puerta",
+                remove_door: "Eliminar",
+                model_label: "Modelo",
+                model_select: "Seleccione un modelo",
+                size_label: "Tamaño",
+                size_standard: "Estándar (36\" × 80\")",
+                size_custom: "Personalizado",
+                unit_label: "Unidad de medida",
+                unit_inches: "Pulgadas",
+                unit_cm: "Centímetros",
+                boquete_width: "Ancho del boquete",
+                boquete_height: "Alto del boquete",
+                boquete_note: "Ingrese las dimensiones del boquete (el vano en la pared). La puerta se fabricará con las tolerancias adecuadas.",
+                price_per_door: "Precio por puerta",
+                price_teaser: "Los precios se mostrarán al solicitar su cotización. Complete sus datos y haga clic en \"Solicitar Cotización\".",
+                steps_locked: "Seleccione un modelo de puerta para cada puerta antes de continuar.",
+                // Summary
+                section_summary: "Resumen de Cotización",
+                summary_model: "Modelo",
+                summary_size: "Tamaño",
+                summary_price: "Precio",
+                summary_total: "Total",
+                summary_standard: "Estándar",
+                summary_custom: "Personalizado",
+                tier_note_1: "Precio regular para 1 puerta.",
+                tier_note_2_5: "Precio especial para 2-5 puertas.",
+                tier_note_6_10: "Precio por volumen para 6-10 puertas.",
+                tier_note_11: "Precio preferencial por volumen mayor a 10 puertas.",
+                payment_title: "Condiciones",
+                payment_items: [
+                    "Anticipo al confirmar el pedido, saldo contra entrega.",
+                    "Tiempo de entrega estimado: 1 mes.",
+                    "Incluye contramarco y mochetas de caoba.",
+                    "Envío gratis en el casco urbano de San Pedro Sula.",
+                    "Cotización válida por 15 días.",
+                ],
+                // Submit
+                submit_btn: "Solicitar Cotización",
+                submitting: "Enviando...",
+                // Validation
+                val_required: "Este campo es obligatorio.",
+                val_email: "Ingrese un correo válido.",
+                val_phone: "Ingrese un teléfono válido.",
+                val_min_door: "Agregue al menos una puerta.",
+                val_model: "Seleccione un modelo para cada puerta.",
+                val_dimensions: "Ingrese dimensiones válidas para las puertas personalizadas.",
+                // Success
+                success_title: "¡Cotización Enviada!",
+                success_msg: "Hemos enviado su cotización al correo",
+                success_msg2: "Nuestro equipo se pondrá en contacto con usted pronto.",
+                success_whatsapp: "Confirmar por WhatsApp",
+                success_new: "Nueva Cotización",
+                // Error
+                error_submit: "Hubo un error al enviar la cotización. Por favor intente de nuevo o contáctenos por WhatsApp.",
+            },
+            en: {
+                nav_home: "Home",
+                nav_quote: "Quote",
+                page_title: "Custom Quote",
+                page_subtitle: "Configure your doors and receive your quote instantly.",
+                section_customer: "Get Your Quote",
+                customer_intro: "Enter your details to receive your quote with pricing directly to your email.",
+                nombre: "First Name",
+                apellido: "Last Name",
+                telefono: "Phone",
+                email: "Email",
+                nombre_ph: "Enter your first name",
+                apellido_ph: "Enter your last name",
+                telefono_ph: "99999999",
+                email_ph: "your@email.com",
+                section_doors: "Configure Your Doors",
+                add_door: "Add Another Door",
+                door_ready: "Ready",
+                door_number: "Door",
+                remove_door: "Remove",
+                model_label: "Model",
+                model_select: "Select a model",
+                size_label: "Size",
+                size_standard: "Standard (36\" × 80\")",
+                size_custom: "Custom",
+                unit_label: "Unit of measure",
+                unit_inches: "Inches",
+                unit_cm: "Centimeters",
+                boquete_width: "Rough opening width",
+                boquete_height: "Rough opening height",
+                boquete_note: "Enter the rough opening dimensions (the wall opening). The door will be manufactured with proper tolerances.",
+                price_per_door: "Price per door",
+                price_teaser: "Prices will be shown when you request your quote. Complete your information and click \"Request Quote\".",
+                steps_locked: "Select a door model for each door before continuing.",
+                section_summary: "Quote Summary",
+                summary_model: "Model",
+                summary_size: "Size",
+                summary_price: "Price",
+                summary_total: "Total",
+                summary_standard: "Standard",
+                summary_custom: "Custom",
+                tier_note_1: "Regular price for 1 door.",
+                tier_note_2_5: "Special price for 2-5 doors.",
+                tier_note_6_10: "Volume price for 6-10 doors.",
+                tier_note_11: "Preferred pricing for more than 10 doors.",
+                payment_title: "Terms",
+                payment_items: [
+                    "Deposit upon order confirmation, balance upon delivery.",
+                    "Estimated delivery time: 1 month.",
+                    "Includes mahogany door frame and trim.",
+                    "Free delivery within the urban area of San Pedro Sula.",
+                    "Quote valid for 15 days.",
+                ],
+                submit_btn: "Request Quote",
+                submitting: "Sending...",
+                val_required: "This field is required.",
+                val_email: "Enter a valid email.",
+                val_phone: "Enter a valid phone number.",
+                val_min_door: "Add at least one door.",
+                val_model: "Select a model for each door.",
+                val_dimensions: "Enter valid dimensions for custom doors.",
+                success_title: "Quote Sent!",
+                success_msg: "We have sent your quote to",
+                success_msg2: "Our team will contact you soon.",
+                success_whatsapp: "Confirm via WhatsApp",
+                success_new: "New Quote",
+                error_submit: "There was an error sending the quote. Please try again or contact us via WhatsApp.",
+            }
+        };
+
+        // ─────────────────────────────────────────────
+        // COMPONENTE PRINCIPAL
+        // ─────────────────────────────────────────────
+        const App = () => {
+            const [lang, setLang] = useState('es');
+            const [scrolled, setScrolled] = useState(false);
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+            const COUNTRY_CODES = [
+                { code: '+504', country: '🇭🇳 HN', name: 'Honduras' },
+                { code: '+1', country: '🇺🇸 US', name: 'United States' },
+                { code: '+52', country: '🇲🇽 MX', name: 'México' },
+                { code: '+502', country: '🇬🇹 GT', name: 'Guatemala' },
+                { code: '+503', country: '🇸🇻 SV', name: 'El Salvador' },
+                { code: '+505', country: '🇳🇮 NI', name: 'Nicaragua' },
+                { code: '+506', country: '🇨🇷 CR', name: 'Costa Rica' },
+                { code: '+507', country: '🇵🇦 PA', name: 'Panamá' },
+                { code: '+57', country: '🇨🇴 CO', name: 'Colombia' },
+                { code: '+34', country: '🇪🇸 ES', name: 'España' },
+            ];
+
+            const [customer, setCustomer] = useState({ nombre: '', apellido: '', codigoPais: '+504', telefono: '', email: '' });
+            const [doors, setDoors] = useState([createDoor()]);
+            const [errors, setErrors] = useState({});
+            const [submitting, setSubmitting] = useState(false);
+            const [submitted, setSubmitted] = useState(false);
+            const [submitError, setSubmitError] = useState(false);
+
+            const t = text[lang];
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            function createDoor() {
+                return {
+                    id: Date.now() + Math.random(),
+                    modelo: '',
+                    sizeType: 'standard',
+                    unit: 'in',
+                    boqueteAncho: '',
+                    boqueteAlto: '',
+                };
+            }
+
+            const totalDoors = doors.length;
+
+            // All doors must have a model selected (and custom sizes filled if applicable)
+            const allDoorsComplete = doors.every(d =>
+                d.modelo && (
+                    d.sizeType === 'standard' ||
+                    (d.sizeType === 'custom' && parseFloat(d.boqueteAncho) > 0 && parseFloat(d.boqueteAlto) > 0)
+                )
+            );
+
+            const doorPrices = useMemo(() => {
+                return doors.map(d => calculateDoorPrice(d, totalDoors));
+            }, [doors, totalDoors]);
+
+            const totalPrice = useMemo(() => {
+                return doorPrices.reduce((sum, p) => sum + p, 0);
+            }, [doorPrices]);
+
+            const tierNote = useMemo(() => {
+                if (totalDoors <= 1) return t.tier_note_1;
+                if (totalDoors <= 5) return t.tier_note_2_5;
+                if (totalDoors <= 10) return t.tier_note_6_10;
+                return t.tier_note_11;
+            }, [totalDoors, t]);
+
+            function updateCustomer(field, value) {
+                setCustomer(prev => ({ ...prev, [field]: value }));
+                if (errors[field]) {
+                    setErrors(prev => { const n = { ...prev }; delete n[field]; return n; });
+                }
+            }
+
+            function addDoor() {
+                setDoors(prev => [...prev, createDoor()]);
+            }
+
+            function removeDoor(index) {
+                if (doors.length <= 1) return;
+                setDoors(prev => prev.filter((_, i) => i !== index));
+            }
+
+            function updateDoor(index, field, value) {
+                setDoors(prev => prev.map((d, i) => {
+                    if (i !== index) return d;
+                    const updated = { ...d, [field]: value };
+                    // Reset custom fields when switching to standard
+                    if (field === 'sizeType' && value === 'standard') {
+                        updated.boqueteAncho = '';
+                        updated.boqueteAlto = '';
+                    }
+                    return updated;
+                }));
+            }
+
+            function validate() {
+                const errs = {};
+                if (!customer.nombre.trim()) errs.nombre = t.val_required;
+                if (!customer.apellido.trim()) errs.apellido = t.val_required;
+                if (!customer.telefono.trim()) errs.telefono = t.val_required;
+                else if (!/[\d\s\-()]{7,}/.test(customer.telefono)) errs.telefono = t.val_phone;
+                if (!customer.email.trim()) errs.email = t.val_required;
+                else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) errs.email = t.val_email;
+
+                if (doors.length === 0) errs.doors = t.val_min_door;
+
+                let doorErrors = false;
+                doors.forEach((d, i) => {
+                    if (!d.modelo) { errs[`door_${i}_modelo`] = true; doorErrors = true; }
+                    if (d.sizeType === 'custom') {
+                        const bw = parseFloat(d.boqueteAncho);
+                        const bh = parseFloat(d.boqueteAlto);
+                        if (!bw || bw <= 0) { errs[`door_${i}_ancho`] = true; doorErrors = true; }
+                        if (!bh || bh <= 0) { errs[`door_${i}_alto`] = true; doorErrors = true; }
+                    }
+                });
+                if (doorErrors) errs.doors_detail = t.val_dimensions;
+
+                setErrors(errs);
+                return Object.keys(errs).length === 0;
+            }
+
+            async function handleSubmit(e) {
+                e.preventDefault();
+                if (!validate()) return;
+
+                setSubmitting(true);
+                setSubmitError(false);
+
+                const payload = {
+                    customer: {
+                        nombre: customer.nombre.trim(),
+                        apellido: customer.apellido.trim(),
+                        telefono: `${customer.codigoPais.replace('+', '')}${customer.telefono.trim()}`,
+                        email: customer.email.trim(),
+                    },
+                    doors: doors.map((d, i) => {
+                        const details = getDoorDetails(d);
+                        const model = DOOR_MODELS.find(m => m.id === d.modelo);
+                        return {
+                            numero: i + 1,
+                            modelo: model ? model.name : d.modelo,
+                            sizeType: d.sizeType,
+                            boquete: d.sizeType === 'standard'
+                                ? '38" × 81"'
+                                : `${d.boqueteAncho}${d.unit === 'in' ? '"' : ' cm'} × ${d.boqueteAlto}${d.unit === 'in' ? '"' : ' cm'}`,
+                            puerta: details
+                                ? `${details.doorWidth} × ${details.doorHeight}`
+                                : 'N/A',
+                            areaM2: details ? details.areaM2 : 'N/A',
+                            precio: doorPrices[i],
+                        };
+                    }),
+                    totalDoors,
+                    totalPrice,
+                    lang,
+                };
+
+                try {
+                    const response = await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(payload),
+                    });
+
+                    // Google Apps Script redirects, so we check if we got any response
+                    if (response.ok || response.type === 'opaque' || response.redirected) {
+                        setSubmitted(true);
+                        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+                    } else {
+                        throw new Error('Response not OK');
+                    }
+                } catch (err) {
+                    // For no-cors mode, we can't read the response but the request was sent
+                    // If APPS_SCRIPT_URL is configured, assume success
+                    if (APPS_SCRIPT_URL !== 'REPLACE_WITH_APPS_SCRIPT_URL') {
+                        setSubmitted(true);
+                        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+                    } else {
+                        setSubmitError(true);
+                    }
+                } finally {
+                    setSubmitting(false);
+                }
+            }
+
+            function resetForm() {
+                setCustomer({ nombre: '', apellido: '', codigoPais: '+504', telefono: '', email: '' });
+                setDoors([createDoor()]);
+                setErrors({});
+                setSubmitted(false);
+                setSubmitError(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            const toggleLang = () => {
+                setLang(prev => prev === 'es' ? 'en' : 'es');
+                setIsMenuOpen(false);
+            };
+
+            // ─── SUCCESS VIEW — shows full quote with prices ───
+            if (submitted) {
+                return (
+                    <div className="font-sans text-forest bg-parchment min-h-screen">
+                        <Navbar lang={lang} toggleLang={toggleLang} scrolled={true} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} t={t} />
+
+                        {/* Header */}
+                        <div className="pt-28 pb-12 px-6 bg-forest text-parchment">
+                            <div className="container mx-auto max-w-4xl text-center">
+                                <div className="w-20 h-20 bg-parchment/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <Icon icon={CheckIcon} size={40} className="text-gold" />
+                                </div>
+                                <h1 className="text-3xl md:text-5xl font-light mb-4">{t.success_title}</h1>
+                                <p className="text-parchment/70 text-lg">{t.success_msg} <strong className="text-parchment">{customer.email}</strong>.</p>
+                                <p className="text-parchment/60 mt-2">{t.success_msg2}</p>
+                            </div>
+                        </div>
+
+                        <div className="container mx-auto max-w-4xl px-6 py-12 fade-in">
+                            {/* Full Quote Table with Prices */}
+                            <div className="bg-white rounded-2xl border border-olive/10 shadow-sm overflow-hidden mb-8">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className="bg-forest text-parchment text-sm">
+                                                <th className="text-left px-6 py-4 font-semibold">#</th>
+                                                <th className="text-left px-6 py-4 font-semibold">{t.summary_model}</th>
+                                                <th className="text-left px-6 py-4 font-semibold">{t.summary_size}</th>
+                                                <th className="text-right px-6 py-4 font-semibold">{t.summary_price}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {doors.map((door, i) => {
+                                                const model = DOOR_MODELS.find(m => m.id === door.modelo);
+                                                return (
+                                                    <tr key={door.id} className="border-b border-olive/10">
+                                                        <td className="px-6 py-4 text-sm text-olive">{i + 1}</td>
+                                                        <td className="px-6 py-4 text-sm font-medium">{model ? model.name : '—'}</td>
+                                                        <td className="px-6 py-4 text-sm text-olive">
+                                                            {door.sizeType === 'standard'
+                                                                ? t.summary_standard + ' (36" × 80")'
+                                                                : door.boqueteAncho && door.boqueteAlto
+                                                                    ? `${t.summary_custom} (${door.boqueteAncho}${door.unit === 'in' ? '"' : 'cm'} × ${door.boqueteAlto}${door.unit === 'in' ? '"' : 'cm'})`
+                                                                    : t.summary_custom
+                                                            }
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm font-semibold text-right">{doorPrices[i] > 0 ? formatLempiras(doorPrices[i]) : '—'}</td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr className="bg-forest text-parchment">
+                                                <td colSpan="3" className="px-6 py-4 font-semibold text-lg">{t.summary_total}</td>
+                                                <td className="px-6 py-4 font-semibold text-lg text-right text-gold">{totalPrice > 0 ? formatLempiras(totalPrice) : '—'}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                                {/* Tier Note */}
+                                <div className="px-6 py-3 bg-gold/10 text-sm text-olive">
+                                    {tierNote}
+                                </div>
+
+                                {/* Payment Terms */}
+                                <div className="p-6 border-t border-olive/10">
+                                    <h3 className="font-semibold text-sm mb-3">{t.payment_title}</h3>
+                                    <ul className="space-y-1.5">
+                                        {t.payment_items.map((item, i) => (
+                                            <li key={i} className="text-sm text-olive flex items-start">
+                                                <span className="text-gold mr-2 mt-0.5">•</span>
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                                <a
+                                    href={`https://wa.me/50432945241?text=${encodeURIComponent(`Hola, acabo de solicitar una cotización a nombre de ${customer.nombre} ${customer.apellido}. Me gustaría confirmar.`)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center space-x-2 bg-forest text-parchment px-8 py-4 rounded-full font-semibold hover:bg-mahogany transition-colors shadow-lg w-full sm:w-auto"
+                                >
+                                    <Icon icon={WhatsAppIcon} size={20} />
+                                    <span>{t.success_whatsapp}</span>
+                                </a>
+                                <button
+                                    onClick={resetForm}
+                                    className="text-olive hover:text-forest transition-colors font-medium"
+                                >
+                                    {t.success_new}
+                                </button>
+                            </div>
+                        </div>
+
+                        <Footer lang={lang} t={text[lang]} />
+                    </div>
+                );
+            }
+
+            // ─── MAIN FORM VIEW ───
+            return (
+                <div className="font-sans text-forest bg-parchment min-h-screen">
+                    <Navbar lang={lang} toggleLang={toggleLang} scrolled={scrolled} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} t={t} />
+
+                    {/* Header */}
+                    <div className="pt-28 pb-12 px-6 bg-forest text-parchment">
+                        <div className="container mx-auto max-w-4xl text-center">
+                            <span className="text-gold font-bold tracking-widest text-xs uppercase mb-2 block">{t.nav_quote}</span>
+                            <h1 className="text-3xl md:text-5xl font-light mb-4">{t.page_title}</h1>
+                            <p className="text-parchment/70 text-lg max-w-xl mx-auto">{t.page_subtitle}</p>
+                            <div className="w-16 h-0.5 bg-gold mx-auto mt-6"></div>
+                        </div>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="pb-24">
+                        <div className="container mx-auto max-w-4xl px-6">
+
+                            {/* ── STEP 1: Door Configuration ── */}
+                            <div className="mt-12 mb-10">
+                                <h2 className="text-2xl font-light mb-6 flex items-center">
+                                    <span className="w-8 h-8 bg-forest text-parchment rounded-full flex items-center justify-center text-sm font-semibold mr-3">1</span>
+                                    {t.section_doors}
+                                </h2>
+
+                                {errors.doors && <p className="text-red-600 text-sm mb-4">{errors.doors}</p>}
+                                {errors.doors_detail && <p className="text-red-600 text-sm mb-4">{errors.doors_detail}</p>}
+
+                                <div className="space-y-6">
+                                    {doors.map((door, index) => (
+                                        <DoorCard
+                                            key={door.id}
+                                            door={door}
+                                            index={index}
+                                            totalDoors={totalDoors}
+                                            price={doorPrices[index]}
+                                            onUpdate={(field, value) => updateDoor(index, field, value)}
+                                            onRemove={() => removeDoor(index)}
+                                            canRemove={doors.length > 1}
+                                            lang={lang}
+                                            t={t}
+                                            errors={errors}
+                                        />
+                                    ))}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={addDoor}
+                                    className="mt-6 flex items-center space-x-2 text-forest border-2 border-dashed border-olive/30 rounded-xl px-6 py-4 w-full justify-center hover:border-gold hover:text-gold transition-colors font-medium"
+                                >
+                                    <Icon icon={PlusIcon} size={20} />
+                                    <span>{t.add_door}</span>
+                                </button>
+                            </div>
+
+                            {/* ── STEP 2: Summary ── */}
+                            <div className={`mb-10 transition-opacity duration-300 ${allDoorsComplete ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
+                                <h2 className="text-2xl font-light mb-6 flex items-center">
+                                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-3 ${allDoorsComplete ? 'bg-forest text-parchment' : 'bg-olive/30 text-parchment'}`}>2</span>
+                                    {t.section_summary}
+                                </h2>
+                                <div className="bg-white rounded-2xl border border-olive/10 shadow-sm overflow-hidden">
+                                    {/* Door list without prices */}
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead>
+                                                <tr className="bg-forest text-parchment text-sm">
+                                                    <th className="text-left px-6 py-4 font-semibold">#</th>
+                                                    <th className="text-left px-6 py-4 font-semibold">{t.summary_model}</th>
+                                                    <th className="text-left px-6 py-4 font-semibold">{t.summary_size}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {doors.map((door, i) => {
+                                                    const model = DOOR_MODELS.find(m => m.id === door.modelo);
+                                                    return (
+                                                        <tr key={door.id} className="border-b border-olive/10">
+                                                            <td className="px-6 py-4 text-sm text-olive">{i + 1}</td>
+                                                            <td className="px-6 py-4 text-sm font-medium">{model ? model.name : '—'}</td>
+                                                            <td className="px-6 py-4 text-sm text-olive">
+                                                                {door.sizeType === 'standard'
+                                                                    ? t.summary_standard + ' (36" × 80")'
+                                                                    : door.boqueteAncho && door.boqueteAlto
+                                                                        ? `${t.summary_custom} (${door.boqueteAncho}${door.unit === 'in' ? '"' : 'cm'} × ${door.boqueteAlto}${door.unit === 'in' ? '"' : 'cm'})`
+                                                                        : t.summary_custom
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {/* Price teaser */}
+                                    <div className="px-6 py-5 bg-gold/10 text-center">
+                                        <p className="text-sm text-olive font-medium">{t.price_teaser}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Locked steps message */}
+                            {!allDoorsComplete && (
+                                <div className="mb-10 p-5 bg-gold/10 border border-gold/30 rounded-2xl text-center fade-in">
+                                    <p className="text-sm text-olive font-medium">{t.steps_locked}</p>
+                                </div>
+                            )}
+
+                            {/* ── STEP 3: Customer Info + Submit ── */}
+                            <div className={`mb-10 transition-opacity duration-300 ${allDoorsComplete ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
+                                <h2 className="text-2xl font-light mb-6 flex items-center">
+                                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-3 ${allDoorsComplete ? 'bg-forest text-parchment' : 'bg-olive/30 text-parchment'}`}>3</span>
+                                    {t.section_customer}
+                                </h2>
+                                <div className="bg-white rounded-2xl p-6 md:p-8 border border-olive/10 shadow-sm">
+                                    <p className="text-sm text-olive mb-6">{t.customer_intro}</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <InputField label={t.nombre} value={customer.nombre} onChange={v => updateCustomer('nombre', v)} placeholder={t.nombre_ph} error={errors.nombre} required />
+                                        <InputField label={t.apellido} value={customer.apellido} onChange={v => updateCustomer('apellido', v)} placeholder={t.apellido_ph} error={errors.apellido} required />
+                                        <div>
+                                            <label className="block text-sm font-semibold mb-2">
+                                                {t.telefono} <span className="text-gold">*</span>
+                                            </label>
+                                            <div className="flex">
+                                                <select
+                                                    value={customer.codigoPais}
+                                                    onChange={e => updateCustomer('codigoPais', e.target.value)}
+                                                    className={`px-3 py-3 rounded-l-xl border border-r-0 ${errors.telefono ? 'border-red-400 bg-red-50' : 'border-olive/20'} focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold bg-parchment/50 text-forest text-sm font-medium transition-colors appearance-none cursor-pointer`}
+                                                    style={{ minWidth: '110px' }}
+                                                >
+                                                    {COUNTRY_CODES.map(cc => (
+                                                        <option key={cc.code} value={cc.code}>
+                                                            {cc.country} {cc.code}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <input
+                                                    type="tel"
+                                                    value={customer.telefono}
+                                                    onChange={e => updateCustomer('telefono', e.target.value)}
+                                                    placeholder={t.telefono_ph}
+                                                    className={`flex-1 min-w-0 px-4 py-3 rounded-r-xl border ${errors.telefono ? 'border-red-400 bg-red-50' : 'border-olive/20'} focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold bg-parchment/50 text-forest placeholder-olive/40 transition-colors`}
+                                                />
+                                            </div>
+                                            {errors.telefono && <p className="text-red-500 text-xs mt-1">{errors.telefono}</p>}
+                                        </div>
+                                        <InputField label={t.email} value={customer.email} onChange={v => updateCustomer('email', v)} placeholder={t.email_ph} type="email" error={errors.email} required />
+                                    </div>
+
+                                    {/* Submit inside customer section */}
+                                    {submitError && (
+                                        <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                                            {t.error_submit}
+                                        </div>
+                                    )}
+                                    <div className="text-center mt-8">
+                                        <button
+                                            type="submit"
+                                            disabled={submitting}
+                                            className="inline-flex items-center space-x-3 bg-forest text-parchment px-10 py-5 rounded-full font-semibold text-lg hover:bg-mahogany transition-colors shadow-lg shadow-forest/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            <Icon icon={SendIcon} size={20} />
+                                            <span>{submitting ? t.submitting : t.submit_btn}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <Footer lang={lang} t={text[lang]} />
+                </div>
+            );
+        };
+
+        // ─────────────────────────────────────────────
+        // COMPONENTES AUXILIARES
+        // ─────────────────────────────────────────────
+
+        const Navbar = ({ lang, toggleLang, scrolled, isMenuOpen, setIsMenuOpen, t }) => (
+            <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-parchment/95 shadow-sm py-4' : 'bg-forest py-4'}`}>
+                <div className="container mx-auto px-6 flex justify-between items-center">
+                    <a href="./index.html" className="block w-48">
+                        <img
+                            src={scrolled
+                                ? "./Logos/Logo-Horizontal-Color-Madeteka.png"
+                                : "./Logos/Logo-Horizontal-Blanco-Madeteka.png"
+                            }
+                            alt="Madeteka"
+                            className={`w-full h-auto transition-all duration-300 ${scrolled ? '' : 'brightness-0 invert'}`}
+                        />
+                    </a>
+
+                    <div className="hidden md:flex items-center space-x-8">
+                        <a href="./index.html" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav_home}</a>
+                        <a href="./index.html#collection" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>
+                            {lang === 'es' ? 'Colección' : 'Collection'}
+                        </a>
+                        <a href="./index.html#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>
+                            {lang === 'es' ? 'Precios' : 'Pricing'}
+                        </a>
+                        <span className={`${scrolled ? 'text-gold' : 'text-gold'} font-semibold text-sm tracking-wide`}>{t.nav_quote}</span>
+                        <button onClick={toggleLang} className={`flex items-center space-x-1 transition-colors ${scrolled ? 'text-olive' : 'text-parchment'} hover:text-gold`}>
+                            <Icon icon={GlobeIcon} size={18} />
+                            <span className="text-sm font-semibold">{lang.toUpperCase()}</span>
+                        </button>
+                    </div>
+
+                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`md:hidden ${scrolled ? 'text-forest' : 'text-parchment'}`}>
+                        <Icon icon={isMenuOpen ? XIcon : MenuIcon} size={28} />
+                    </button>
+                </div>
+
+                {isMenuOpen && (
+                    <div className="absolute top-full left-0 w-full bg-parchment shadow-lg md:hidden flex flex-col items-center py-8 space-y-6 border-t border-olive/10">
+                        <a href="./index.html" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav_home}</a>
+                        <a href="./index.html#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{lang === 'es' ? 'Colección' : 'Collection'}</a>
+                        <span className="text-lg font-medium text-gold">{t.nav_quote}</span>
+                        <button onClick={toggleLang} className="flex items-center space-x-2 text-olive border px-4 py-1 rounded-full border-olive/30">
+                            <Icon icon={GlobeIcon} size={16} />
+                            <span>{lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}</span>
+                        </button>
+                    </div>
+                )}
+            </nav>
+        );
+
+        const Footer = ({ lang, t }) => (
+            <footer className="bg-forest text-parchment/60 py-12 border-t border-parchment/10">
+                <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="w-40">
+                        <img src="./Logos/Logo-Horizontal-Blanco-Madeteka.png" alt="Madeteka" className="w-full h-auto brightness-0 invert opacity-90" />
+                    </div>
+                    <div className="flex space-x-6 text-sm font-medium">
+                        <a href="https://www.instagram.com/lamadeteka/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">Instagram</a>
+                        <a href="http://facebook.com/lamadeteka" target="_blank" className="hover:text-gold transition-colors">Facebook</a>
+                        <a href="https://wa.me/50432945241" target="_blank" className="hover:text-gold transition-colors">WhatsApp</a>
+                    </div>
+                    <div className="text-xs text-center md:text-right space-y-1">
+                        <p>&copy; {new Date().getFullYear()} Madeteka. {lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}</p>
+                        <p><span className="font-semibold">{lang === 'es' ? 'Oficina:' : 'Office:'}</span> Plaza Mahanaim, Sector Palenque, San Pedro Sula, Honduras.</p>
+                    </div>
+                </div>
+            </footer>
+        );
+
+        const InputField = ({ label, value, onChange, placeholder, type = 'text', error, required }) => (
+            <div>
+                <label className="block text-sm font-semibold mb-2">
+                    {label} {required && <span className="text-gold">*</span>}
+                </label>
+                <input
+                    type={type}
+                    value={value}
+                    onChange={e => onChange(e.target.value)}
+                    placeholder={placeholder}
+                    className={`w-full px-4 py-3 rounded-xl border ${error ? 'border-red-400 bg-red-50' : 'border-olive/20'} focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold bg-parchment/50 text-forest placeholder-olive/40 transition-colors`}
+                />
+                {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+            </div>
+        );
+
+        const DoorCard = ({ door, index, totalDoors, price, onUpdate, onRemove, canRemove, lang, t, errors }) => {
+            const modelError = errors[`door_${index}_modelo`];
+            const anchoError = errors[`door_${index}_ancho`];
+            const altoError = errors[`door_${index}_alto`];
+
+            // Door is "complete" when model is selected AND size is valid
+            const isComplete = door.modelo && (
+                door.sizeType === 'standard' ||
+                (door.sizeType === 'custom' && door.boqueteAncho && door.boqueteAlto)
+            );
+
+            return (
+                <div className={`bg-white rounded-2xl border-2 shadow-sm overflow-hidden fade-in transition-colors ${isComplete ? 'border-green-400/60' : 'border-olive/10'}`}>
+                    {/* Card Header */}
+                    <div className={`flex justify-between items-center px-6 py-4 border-b transition-colors ${isComplete ? 'bg-green-50 border-green-400/30' : 'bg-forest/5 border-olive/10'}`}>
+                        <div className="flex items-center space-x-2">
+                            <h3 className="font-semibold">{t.door_number} {index + 1}</h3>
+                            {isComplete && (
+                                <span className="inline-flex items-center space-x-1 bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                    <Icon icon={CheckIcon} size={12} />
+                                    <span>{t.door_ready}</span>
+                                </span>
+                            )}
+                        </div>
+                        {canRemove && (
+                            <button
+                                type="button"
+                                onClick={onRemove}
+                                className="flex items-center space-x-1 text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                            >
+                                <Icon icon={TrashIcon} size={16} />
+                                <span>{t.remove_door}</span>
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="p-6">
+                        {/* Model Selection */}
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold mb-3">{t.model_label} <span className="text-gold">*</span></label>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                                {DOOR_MODELS.map(model => (
+                                    <button
+                                        key={model.id}
+                                        type="button"
+                                        onClick={() => onUpdate('modelo', model.id)}
+                                        className={`relative rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                                            door.modelo === model.id
+                                                ? 'border-gold shadow-lg scale-[1.02]'
+                                                : modelError
+                                                    ? 'border-red-300'
+                                                    : 'border-olive/10 hover:border-olive/30'
+                                        }`}
+                                    >
+                                        <div className="aspect-[3/4] overflow-hidden">
+                                            <img
+                                                src={model.img}
+                                                alt={model.name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {e.target.style.display='none'; e.target.parentElement.style.backgroundColor='#2D4221'}}
+                                            />
+                                        </div>
+                                        <div className={`p-2 text-center transition-colors ${door.modelo === model.id ? 'bg-gold/10' : 'bg-parchment/50'}`}>
+                                            <p className="text-xs font-semibold">{model.name}</p>
+                                        </div>
+                                        {door.modelo === model.id && (
+                                            <div className="absolute top-1.5 right-1.5 w-6 h-6 bg-gold rounded-full flex items-center justify-center">
+                                                <Icon icon={CheckIcon} size={14} className="text-white" />
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Size Selection */}
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold mb-3">{t.size_label}</label>
+                            <div className="flex flex-wrap gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate('sizeType', 'standard')}
+                                    className={`px-5 py-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                                        door.sizeType === 'standard'
+                                            ? 'border-gold bg-gold/10 text-forest'
+                                            : 'border-olive/20 text-olive hover:border-olive/40'
+                                    }`}
+                                >
+                                    {t.size_standard}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate('sizeType', 'custom')}
+                                    className={`px-5 py-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                                        door.sizeType === 'custom'
+                                            ? 'border-gold bg-gold/10 text-forest'
+                                            : 'border-olive/20 text-olive hover:border-olive/40'
+                                    }`}
+                                >
+                                    {t.size_custom}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Custom Size Fields */}
+                        {door.sizeType === 'custom' && (
+                            <div className="bg-parchment/50 rounded-xl p-5 border border-olive/10">
+                                <p className="text-xs text-olive mb-4">{t.boquete_note}</p>
+
+                                {/* Unit Toggle */}
+                                <div className="mb-4">
+                                    <label className="block text-xs font-semibold mb-2 text-olive">{t.unit_label}</label>
+                                    <div className="inline-flex rounded-lg border border-olive/20 overflow-hidden">
+                                        <button
+                                            type="button"
+                                            onClick={() => onUpdate('unit', 'in')}
+                                            className={`px-4 py-2 text-sm font-medium transition-colors ${
+                                                door.unit === 'in' ? 'bg-forest text-parchment' : 'bg-white text-olive hover:bg-parchment'
+                                            }`}
+                                        >
+                                            {t.unit_inches}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => onUpdate('unit', 'cm')}
+                                            className={`px-4 py-2 text-sm font-medium transition-colors ${
+                                                door.unit === 'cm' ? 'bg-forest text-parchment' : 'bg-white text-olive hover:bg-parchment'
+                                            }`}
+                                        >
+                                            {t.unit_cm}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold mb-1.5">{t.boquete_width} ({door.unit === 'in' ? '"' : 'cm'})</label>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            min="0"
+                                            value={door.boqueteAncho}
+                                            onChange={e => onUpdate('boqueteAncho', e.target.value)}
+                                            placeholder={door.unit === 'in' ? '38' : '97'}
+                                            className={`w-full px-4 py-3 rounded-xl border ${anchoError ? 'border-red-400 bg-red-50' : 'border-olive/20'} focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold bg-white text-forest placeholder-olive/40`}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold mb-1.5">{t.boquete_height} ({door.unit === 'in' ? '"' : 'cm'})</label>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            min="0"
+                                            value={door.boqueteAlto}
+                                            onChange={e => onUpdate('boqueteAlto', e.target.value)}
+                                            placeholder={door.unit === 'in' ? '81' : '206'}
+                                            className={`w-full px-4 py-3 rounded-xl border ${altoError ? 'border-red-400 bg-red-50' : 'border-olive/20'} focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold bg-white text-forest placeholder-olive/40`}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Price note */}
+                    </div>
+                </div>
+            );
+        };
+
+        // ─── RENDER ───
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
