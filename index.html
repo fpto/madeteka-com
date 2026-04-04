@@ -205,7 +205,7 @@
                     subtitle: "Ahorre más al ordenar en volumen",
                     includes: "Todos los precios incluyen juego de mocheta y contramarco. Envío GRATIS en el casco urbano de San Pedro Sula.",
                     tiers: [
-                        { label: "1 Puerta",          price: "L30,000",          unit: "por unidad", cta: "Ordenar",  custom: false },
+                        { label: "1 Puerta",          price: "L25,000", originalPrice: "L30,000", badge: "Por tiempo limitado", unit: "tamaño estándar", cta: "Ordenar",  custom: false },
                         { label: "2 – 5 Puertas",     price: "L25,000",          unit: "por unidad", cta: "Ordenar",  custom: false },
                         { label: "5 – 10 Puertas",    price: "L22,500",          unit: "por unidad", cta: "Ordenar",  custom: false },
                         { label: "Más de 10 Puertas", price: "Precio especial",  unit: "cotización a la medida", cta: "Consultar", custom: true }
@@ -322,7 +322,7 @@
                     subtitle: "Save more when you order in volume",
                     includes: "All prices include mocheta trim set and door frame. FREE delivery within the urban area of San Pedro Sula.",
                     tiers: [
-                        { label: "1 Door",       price: "L30,000",       unit: "per unit", cta: "Order",   custom: false },
+                        { label: "1 Door",       price: "L25,000", originalPrice: "L30,000", badge: "Limited time", unit: "standard size", cta: "Order",   custom: false },
                         { label: "2 – 5 Doors",  price: "L25,000",       unit: "per unit", cta: "Order",   custom: false },
                         { label: "5 – 10 Doors", price: "L22,500",       unit: "per unit", cta: "Order",   custom: false },
                         { label: "10+ Doors",    price: "Custom pricing", unit: "tailored quote", cta: "Inquire", custom: true }
@@ -609,8 +609,10 @@
                                         className={`group flex flex-col items-center text-center p-8 rounded-2xl border transition-all duration-300 hover:scale-105 hover:shadow-xl ${tier.custom ? 'bg-forest text-parchment border-forest' : 'bg-white border-olive/20 hover:border-gold'}`}
                                     >
                                         <p className={`text-xs font-bold tracking-widest uppercase mb-4 ${tier.custom ? 'text-gold' : 'text-olive'}`}>{tier.label}</p>
+                                        {tier.originalPrice && <p className="text-sm text-olive/50 line-through mb-1">{tier.originalPrice}</p>}
                                         <p className={`text-2xl md:text-3xl font-semibold mb-1 ${tier.custom ? 'text-parchment' : 'text-forest'}`}>{tier.price}</p>
-                                        <p className={`text-xs mb-6 ${tier.custom ? 'text-parchment/60' : 'text-olive'}`}>{tier.unit}</p>
+                                        <p className={`text-xs ${tier.badge ? 'mb-2' : 'mb-6'} ${tier.custom ? 'text-parchment/60' : 'text-olive'}`}>{tier.unit}</p>
+                                        {tier.badge && <p className="text-xs font-semibold text-gold mb-6">{tier.badge}</p>}
                                         <span className={`mt-auto inline-block px-5 py-2 rounded-full text-sm font-semibold transition-colors ${tier.custom ? 'bg-gold text-forest group-hover:bg-white' : 'bg-forest/5 text-forest group-hover:bg-forest group-hover:text-parchment'}`}>
                                             {tier.cta}
                                         </span>
