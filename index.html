@@ -173,31 +173,37 @@
                 },
                 showcase: {
                     title: "Nuestra Selección",
+                    cta: "Ver colección completa",
                     items: [
-                        { 
-                            name: "Toscana", 
-                            desc: "Elegancia mediterránea, calidez y tradición.", 
-                            img: "./Modelos-Alfa-Madeteka/Toscana.jpeg" 
+                        {
+                            name: "Toscana",
+                            slug: "toscana",
+                            desc: "Elegancia mediterránea, calidez y tradición.",
+                            img: "./Modelos-Alfa-Madeteka/Toscana.jpeg"
                         },
-                        { 
-                            name: "Tokio", 
-                            desc: "Vanguardia minimalista, diseño que respira.", 
-                            img: "./Modelos-Alfa-Madeteka/Tokio.jpeg" 
+                        {
+                            name: "Tokio",
+                            slug: "tokio",
+                            desc: "Vanguardia minimalista, diseño que respira.",
+                            img: "./Modelos-Alfa-Madeteka/Tokio.jpeg"
                         },
-                        { 
-                            name: "Moscú", 
-                            desc: "Solidez imperial, protección absoluta.", 
-                            img: "./Modelos-Alfa-Madeteka/Moscu.jpg" 
+                        {
+                            name: "Moscú",
+                            slug: "moscu",
+                            desc: "Solidez imperial, protección absoluta.",
+                            img: "./Modelos-Alfa-Madeteka/Moscu.jpg"
                         },
-                        { 
-                            name: "Kioto", 
-                            desc: "Armonía zen, belleza en el detalle.", 
-                            img: "./Modelos-Alfa-Madeteka/Kioto.jpeg" 
+                        {
+                            name: "Kioto",
+                            slug: "kioto",
+                            desc: "Armonía zen, belleza en el detalle.",
+                            img: "./Modelos-Alfa-Madeteka/Kioto.jpeg"
                         },
-                        { 
-                            name: "Bali", 
-                            desc: "Exotismo natural, conexión con lo orgánico.", 
-                            img: "./Modelos-Alfa-Madeteka/Bali.jpg" 
+                        {
+                            name: "Bali",
+                            slug: "bali",
+                            desc: "Exotismo natural, conexión con lo orgánico.",
+                            img: "./Modelos-Alfa-Madeteka/Bali.jpg"
                         }
                     ]
                 },
@@ -297,31 +303,37 @@
                 },
                 showcase: {
                     title: "Our Selection",
+                    cta: "View full collection",
                     items: [
-                        { 
-                            name: "Toscana", 
-                            desc: "Mediterranean elegance, warmth and tradition.", 
-                            img: "./Modelos-Alfa-Madeteka/Toscana.jpeg" 
+                        {
+                            name: "Toscana",
+                            slug: "toscana",
+                            desc: "Mediterranean elegance, warmth and tradition.",
+                            img: "./Modelos-Alfa-Madeteka/Toscana.jpeg"
                         },
-                        { 
-                            name: "Tokio", 
-                            desc: "Minimalist avant-garde, design that breathes.", 
-                            img: "./Modelos-Alfa-Madeteka/Tokio.jpeg" 
+                        {
+                            name: "Tokio",
+                            slug: "tokio",
+                            desc: "Minimalist avant-garde, design that breathes.",
+                            img: "./Modelos-Alfa-Madeteka/Tokio.jpeg"
                         },
-                        { 
-                            name: "Moscow", 
-                            desc: "Imperial solidity, absolute protection.", 
-                            img: "./Modelos-Alfa-Madeteka/Moscu.jpg" 
+                        {
+                            name: "Moscow",
+                            slug: "moscu",
+                            desc: "Imperial solidity, absolute protection.",
+                            img: "./Modelos-Alfa-Madeteka/Moscu.jpg"
                         },
-                        { 
-                            name: "Kyoto", 
-                            desc: "Zen harmony, beauty in the detail.", 
-                            img: "./Modelos-Alfa-Madeteka/Kioto.jpeg" 
+                        {
+                            name: "Kyoto",
+                            slug: "kioto",
+                            desc: "Zen harmony, beauty in the detail.",
+                            img: "./Modelos-Alfa-Madeteka/Kioto.jpeg"
                         },
-                        { 
-                            name: "Bali", 
-                            desc: "Natural exoticism, connection to the organic.", 
-                            img: "./Modelos-Alfa-Madeteka/Bali.jpg" 
+                        {
+                            name: "Bali",
+                            slug: "bali",
+                            desc: "Natural exoticism, connection to the organic.",
+                            img: "./Modelos-Alfa-Madeteka/Bali.jpg"
                         }
                     ]
                 },
@@ -456,7 +468,7 @@
 
                             {/* Desktop Menu */}
                             <div className="hidden md:flex items-center space-x-8">
-                                <a href="#collection" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.collection}</a>
+                                <a href="./coleccion" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.collection}</a>
                                 <a href="#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.pricing}</a>
                                 <a href="./sobre-nosotros" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.about}</a>
                                 <a href="#faq" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.faq}</a>
@@ -483,7 +495,7 @@
                         {/* Mobile Dropdown */}
                         {isMenuOpen && (
                             <div className="absolute top-full left-0 w-full bg-parchment shadow-lg md:hidden flex flex-col items-center py-8 space-y-6 border-t border-olive/10">
-                                <a href="#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.collection}</a>
+                                <a href="./coleccion" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.collection}</a>
                                 <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.pricing}</a>
                                 <a href="./sobre-nosotros" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.about}</a>
                                 <a href="#faq" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.faq}</a>
@@ -587,12 +599,12 @@
 
                             <div className="flex flex-wrap justify-center gap-8">
                                 {t.showcase.items.map((item, index) => (
-                                    <a href="#contact" key={index} className="group block cursor-pointer w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-2rem)]">
+                                    <a href={`./coleccion#modelo-${item.slug}`} key={index} className="group block cursor-pointer w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-2rem)]">
                                         <div className="relative overflow-hidden rounded-lg aspect-[3/4] mb-6">
-                                            <img 
-                                                src={item.img} 
-                                                alt={item.name} 
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                            <img
+                                                src={item.img}
+                                                alt={item.name}
+                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 onError={(e) => {e.target.style.display='none'; e.target.parentElement.style.backgroundColor='#2D4221'}}
                                             />
                                             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
@@ -601,6 +613,16 @@
                                         <p className="text-olive text-sm">{item.desc}</p>
                                     </a>
                                 ))}
+                            </div>
+
+                            <div className="text-center mt-16">
+                                <a
+                                    href="./coleccion"
+                                    className="inline-flex items-center space-x-2 bg-gold text-forest px-8 py-4 rounded-full font-semibold hover:bg-white hover:scale-105 transition-all shadow-lg"
+                                >
+                                    <span>{t.showcase.cta}</span>
+                                    <Icon icon={ArrowRight} size={18} />
+                                </a>
                             </div>
                         </div>
                     </section>
