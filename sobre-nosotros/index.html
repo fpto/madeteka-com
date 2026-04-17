@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nosotros | Madeteka · Artesanía en Caoba</title>
+    <meta name="description" content="Conozca Madeteka: puertas de caoba fabricadas a mano por maestros ebanistas en Olanchito, Yoro. Visítenos en nuestra sala de ventas en San Pedro Sula.">
+    <link rel="icon" type="image/png" href="/Logos/Logo-Color-Madeteka-Favicon.png">
+
+    <!-- Facebook Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1416179276653558');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1416179276653558&ev=PageView&noscript=1"
+    /></noscript>
+
+    <!-- Preload hero image -->
+    <link rel="preload" as="image" href="/Fotos-Fabricacion/entaller-1.webp">
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Quicksand -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#2D4221',
+                        gold: '#C5A059',
+                        mahogany: '#4A2C2A',
+                        parchment: '#F5F2E9',
+                        olive: '#5E6B56',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F5F2E9;
+            color: #2D4221;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out both;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const INSTAGRAM_URL = "https://www.instagram.com/lamadeteka/";
+        const CAL_URL = "https://cal.com/madeteka/visita-madeteka";
+        const MAP_LINK = "https://maps.app.goo.gl/yCJUCqLUxqzGjjVJ6";
+        const MAP_EMBED = "https://www.openstreetmap.org/export/embed.html?bbox=-88.02762%2C15.53955%2C-87.99948%2C15.54325&layer=mapnik&marker=15.5413962%2C-88.0212837";
+
+        // --- Inline Icons ---
+        const IconBase = ({ size = 24, className = "", children }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                className={className}>{children}</svg>
+        );
+        const Menu = (p) => (<IconBase {...p}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></IconBase>);
+        const X = (p) => (<IconBase {...p}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></IconBase>);
+        const Globe = (p) => (<IconBase {...p}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></IconBase>);
+        const MapPin = (p) => (<IconBase {...p}><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></IconBase>);
+        const Calendar = (p) => (<IconBase {...p}><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></IconBase>);
+        const ArrowRight = (p) => (<IconBase {...p}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></IconBase>);
+        const Hammer = (p) => (<IconBase {...p}><path d="m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9"/><path d="m18 15 4-4"/><path d="m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V2h-3v6.172a2 2 0 0 1-.586 1.414L12 12"/></IconBase>);
+        const ShieldCheck = (p) => (<IconBase {...p}><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></IconBase>);
+        const Leaf = (p) => (<IconBase {...p}><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></IconBase>);
+        const WhatsAppIcon = (p) => (<IconBase {...p}><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/></IconBase>);
+
+        const content = {
+            es: {
+                nav: {
+                    collection: "Colección",
+                    philosophy: "Filosofía",
+                    pricing: "Precios",
+                    faq: "Preguntas",
+                    about: "Sobre Nosotros",
+                    contact: "Contacto",
+                    quote: "Cotizar",
+                },
+                hero: {
+                    kicker: "Sobre Nosotros",
+                    title: "Puertas hechas a mano, con la calma de un oficio que no se apresura.",
+                    subtitle: "Somos Madeteka: nuestro equipo de maestros ebanistas se enorgullece de llevar la caoba hondureña de los talleres de Olanchito a los hogares de toda Honduras.",
+                },
+                craft: {
+                    kicker: "Nuestro Oficio",
+                    title: "Olanchito, Yoro. Donde nace cada puerta.",
+                    p1: "En el corazón del valle del Aguán, nuestros maestros ebanistas seleccionan a mano cada pieza de caoba hondureña. Nada se hace rápido: las tablas se dejan secar hasta el punto exacto, los cortes se miden tres veces, las uniones se ensamblan sin un solo clavo visible.",
+                    p2: "Cada puerta pasa por las manos de un solo responsable, de principio a fin. Es así como un árbol se convierte en la entrada de una casa — con paciencia, precisión y el orgullo callado de quien conoce su oficio.",
+                    values: [
+                        {
+                            icon: 'Hammer',
+                            title: "Maestros ebanistas",
+                            desc: "Décadas de tradición. Cada puerta lleva la firma invisible del artesano que la construyó."
+                        },
+                        {
+                            icon: 'Leaf',
+                            title: "Caoba seleccionada",
+                            desc: "Madera hondureña escogida pieza por pieza. Solo la que cumple pasa a taller."
+                        },
+                        {
+                            icon: 'ShieldCheck',
+                            title: "Sin contratiempos",
+                            desc: "Diseñamos, fabricamos y entregamos en el tiempo prometido. Sin sorpresas, sin excusas."
+                        }
+                    ]
+                },
+                vision: {
+                    kicker: "Nuestra Visión",
+                    title: "Fabricar puertas de la más alta calidad, sin contratiempos.",
+                    body: "Creemos que la entrada de su casa no debería ser un punto de estrés. Por eso Madeteka existe: para que usted reciba la puerta que imaginó, en la fecha acordada, instalada por un equipo que cuida su obra como si fuera la propia. Calidad silenciosa. Entrega puntual. Palabra cumplida."
+                },
+                showroom: {
+                    kicker: "Sala de Ventas",
+                    title: "Venga a conocer la caoba de cerca.",
+                    p1: "Nuestra sala de ventas en San Pedro Sula es el lugar donde podrá tocar la madera, abrir las puertas, ver los acabados bajo la luz natural y hablar con nuestro equipo sin prisa.",
+                    p2: "Atendemos con cita previa para dedicarle el tiempo que su proyecto merece.",
+                    address_label: "Dirección",
+                    address: "Local 11, Plaza Mahanaim, Sector Palenque, San Pedro Sula, Honduras.",
+                    map_cta: "Ver en Google Maps",
+                    cal_cta: "Agendar una visita"
+                },
+                cta: {
+                    title: "¿Listo para dar el primer paso?",
+                    desc: "Escríbanos por WhatsApp o solicite su cotización en línea. Nosotros hacemos el resto.",
+                    wa: "Escríbenos por WhatsApp",
+                    quote: "Solicitar Cotización"
+                },
+                footer: {
+                    rights: "Todos los derechos reservados.",
+                    office_label: "Oficina:",
+                    office: "Plaza Mahanaim, Sector Palenque, San Pedro Sula, Honduras."
+                }
+            },
+            en: {
+                nav: {
+                    collection: "Collection",
+                    philosophy: "Philosophy",
+                    pricing: "Pricing",
+                    faq: "FAQ",
+                    about: "About Us",
+                    contact: "Contact",
+                    quote: "Quote",
+                },
+                hero: {
+                    kicker: "About Us",
+                    title: "Handmade doors, built with the calm of a craft that refuses to rush.",
+                    subtitle: "We are Madeteka: our team of master woodworkers takes pride in bringing Honduran mahogany from our workshops in Olanchito to homes across the country."
+                },
+                craft: {
+                    kicker: "Our Craft",
+                    title: "Olanchito, Yoro. Where every door is born.",
+                    p1: "In the heart of the Aguán valley, our master woodworkers hand-pick each piece of Honduran mahogany. Nothing is rushed: boards are dried to the exact point, cuts are measured three times, joints are assembled without a single visible nail.",
+                    p2: "Each door moves through the hands of a single craftsman, from start to finish. That is how a tree becomes the entrance of a home — with patience, precision, and the quiet pride of people who know their trade.",
+                    values: [
+                        {
+                            icon: 'Hammer',
+                            title: "Master woodworkers",
+                            desc: "Decades of tradition. Every door carries the invisible signature of the craftsman who built it."
+                        },
+                        {
+                            icon: 'Leaf',
+                            title: "Hand-selected mahogany",
+                            desc: "Honduran wood chosen piece by piece. Only what measures up makes it into the workshop."
+                        },
+                        {
+                            icon: 'ShieldCheck',
+                            title: "No surprises",
+                            desc: "We design, build, and deliver on the date we promised. No excuses, no delays."
+                        }
+                    ]
+                },
+                vision: {
+                    kicker: "Our Vision",
+                    title: "Build the finest mahogany doors — and deliver them without a hitch.",
+                    body: "We believe the entrance to your home should not be a source of stress. That is why Madeteka exists: so you receive the door you imagined, on the date we agreed, installed by a team that treats your project as its own. Quiet quality. Punctual delivery. Our word, kept."
+                },
+                showroom: {
+                    kicker: "Showroom",
+                    title: "Come see the mahogany up close.",
+                    p1: "Our showroom in San Pedro Sula is where you can touch the wood, open the doors, see the finishes under natural light, and talk with our team without a clock ticking.",
+                    p2: "We welcome visits by appointment so we can give your project the time it deserves.",
+                    address_label: "Address",
+                    address: "Local 11, Plaza Mahanaim, Sector Palenque, San Pedro Sula, Honduras.",
+                    map_cta: "View on Google Maps",
+                    cal_cta: "Schedule a visit"
+                },
+                cta: {
+                    title: "Ready to take the first step?",
+                    desc: "Message us on WhatsApp or request your quote online. We'll handle the rest.",
+                    wa: "Message us on WhatsApp",
+                    quote: "Request a Quote"
+                },
+                footer: {
+                    rights: "All rights reserved.",
+                    office_label: "Office:",
+                    office: "Plaza Mahanaim, Sector Palenque, San Pedro Sula, Honduras."
+                }
+            }
+        };
+
+        const CRAFT_IMAGES = [
+            { src: "/Fotos-Fabricacion/entaller-2.webp", alt: "Maestro ebanista trabajando caoba" },
+            { src: "/Fotos-Fabricacion/entaller-3.webp", alt: "Taller de fabricación Madeteka" },
+            { src: "/Fotos-Fabricacion/entaller-4.webp", alt: "Detalle de ensamble en caoba" },
+            { src: "/Fotos-Fabricacion/entaller-5.webp", alt: "Puerta en proceso de fabricación" },
+            { src: "/Fotos-Fabricacion/entaller-6.webp", alt: "Acabado a mano de puerta Madeteka" },
+            { src: "/Fotos-Fabricacion/entaller-7.webp", alt: "Selección de tablas de caoba" },
+            { src: "/Fotos-Fabricacion/entaller-8.webp", alt: "Ensamble de puerta Madeteka" },
+            { src: "/Fotos-Fabricacion/entaller-9.webp", alt: "Puerta terminada en taller" },
+        ];
+
+        const SHOWROOM_IMAGES = [
+            { src: "/Sala-de-Ventas/sala-de-ventas-1.webp", alt: "Sala de ventas Madeteka en San Pedro Sula" },
+            { src: "/Sala-de-Ventas/sala-de-ventas-2.webp", alt: "Puertas de caoba en exhibición" },
+            { src: "/Sala-de-Ventas/sala-de-ventas-3.webp", alt: "Modelos de puertas Madeteka" },
+            { src: "/Sala-de-Ventas/sala-de-ventas-4.webp", alt: "Showroom Madeteka" },
+        ];
+
+        const iconMap = { Hammer, ShieldCheck, Leaf };
+
+        const App = () => {
+            const [lang, setLang] = useState('es');
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [scrolled, setScrolled] = useState(false);
+
+            const t = content[lang];
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const Icon = ({ icon: IconComponent, size = 24, className }) => {
+                if (!IconComponent) return null;
+                return <IconComponent size={size} className={className} />;
+            };
+
+            const toggleLang = () => {
+                setLang(prev => prev === 'es' ? 'en' : 'es');
+                setIsMenuOpen(false);
+            };
+
+            return (
+                <div className="font-sans text-forest bg-parchment overflow-x-hidden selection:bg-gold selection:text-white">
+
+                    {/* Navigation */}
+                    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-parchment/95 shadow-sm py-4' : 'bg-transparent py-6'}`}>
+                        <div className="container mx-auto px-6 flex justify-between items-center">
+                            <a href="/" className="block w-48">
+                                <img
+                                    src={scrolled
+                                        ? "/Logos/Logo-Horizontal-Color-Madeteka.png"
+                                        : "/Logos/Logo-Horizontal-Blanco-Madeteka.png"
+                                    }
+                                    alt="Madeteka"
+                                    className={`w-full h-auto transition-all duration-300 ${scrolled ? '' : 'brightness-0 invert'}`}
+                                />
+                            </a>
+
+                            {/* Desktop Menu */}
+                            <div className="hidden md:flex items-center space-x-8">
+                                <a href="/#collection" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.collection}</a>
+                                <a href="/#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.pricing}</a>
+                                <a href="/sobre-nosotros" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-semibold text-sm tracking-wide`}>{t.nav.about}</a>
+                                <a href="/#faq" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>{t.nav.faq}</a>
+                                <a href="/cotizar" className={`px-5 py-2 bg-gold text-forest rounded-full text-sm font-semibold hover:bg-white hover:scale-105 transition-all shadow-sm`}>
+                                    {t.nav.quote}
+                                </a>
+                                <a href="/#contact" className={`px-5 py-2 border transition-all rounded-full text-sm font-semibold ${scrolled ? 'border-forest text-forest hover:bg-forest hover:text-parchment' : 'border-parchment text-parchment hover:bg-parchment hover:text-forest'}`}>
+                                    {t.nav.contact}
+                                </a>
+                                <button onClick={toggleLang} className={`flex items-center space-x-1 transition-colors ${scrolled ? 'text-olive' : 'text-parchment'} hover:text-gold`}>
+                                    <Icon icon={Globe} size={18} />
+                                    <span className="text-sm font-semibold">{lang.toUpperCase()}</span>
+                                </button>
+                            </div>
+
+                            {/* Mobile Menu Button */}
+                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`md:hidden ${scrolled ? 'text-forest' : 'text-parchment'}`}>
+                                <Icon icon={isMenuOpen ? X : Menu} size={28} />
+                            </button>
+                        </div>
+
+                        {/* Mobile Dropdown */}
+                        {isMenuOpen && (
+                            <div className="absolute top-full left-0 w-full bg-parchment shadow-lg md:hidden flex flex-col items-center py-8 space-y-6 border-t border-olive/10">
+                                <a href="/#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.collection}</a>
+                                <a href="/#pricing" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.pricing}</a>
+                                <a href="/sobre-nosotros" onClick={() => setIsMenuOpen(false)} className="text-lg font-semibold text-forest">{t.nav.about}</a>
+                                <a href="/#faq" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.faq}</a>
+                                <a href="/cotizar" className="text-lg font-semibold text-gold">{t.nav.quote}</a>
+                                <a href="/#contact" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav.contact}</a>
+                                <button onClick={toggleLang} className="flex items-center space-x-2 text-olive border px-4 py-1 rounded-full border-olive/30">
+                                    <Icon icon={Globe} size={16} />
+                                    <span>{lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}</span>
+                                </button>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* Hero */}
+                    <header className="relative min-h-[75vh] flex items-center justify-center overflow-hidden">
+                        <div className="absolute inset-0 z-0">
+                            <img
+                                src="/Fotos-Fabricacion/entaller-1.webp"
+                                alt="Maestro ebanista Madeteka"
+                                className="w-full h-full object-cover"
+                                fetchpriority="high"
+                            />
+                            <div className="absolute inset-0 bg-forest/80 mix-blend-multiply"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-forest/90 to-transparent"></div>
+                        </div>
+
+                        <div className="relative z-10 container mx-auto px-6 text-center pt-28 pb-20">
+                            <span className="text-gold font-bold tracking-widest text-xs uppercase mb-4 block fade-in">{t.hero.kicker}</span>
+                            <h1 className="text-4xl md:text-6xl font-light text-parchment mb-6 leading-tight fade-in max-w-4xl mx-auto" style={{animationDelay: '0.15s'}}>
+                                {t.hero.title}
+                            </h1>
+                            <p className="text-lg md:text-xl text-parchment/80 max-w-2xl mx-auto font-light fade-in" style={{animationDelay: '0.3s'}}>
+                                {t.hero.subtitle}
+                            </p>
+                        </div>
+                    </header>
+
+                    {/* Craft / Fabrication */}
+                    <section className="py-24 bg-parchment">
+                        <div className="container mx-auto px-6">
+                            <div className="max-w-3xl mx-auto text-center mb-16">
+                                <span className="text-gold font-bold tracking-widest text-xs uppercase mb-3 block">{t.craft.kicker}</span>
+                                <h2 className="text-3xl md:text-4xl font-light text-forest mb-6">{t.craft.title}</h2>
+                                <div className="w-16 h-0.5 bg-gold mx-auto mb-8"></div>
+                                <p className="text-olive text-base md:text-lg leading-relaxed mb-5">{t.craft.p1}</p>
+                                <p className="text-olive text-base md:text-lg leading-relaxed">{t.craft.p2}</p>
+                            </div>
+
+                            {/* Craft values */}
+                            <div className="grid md:grid-cols-3 gap-10 mb-20 max-w-5xl mx-auto">
+                                {t.craft.values.map((v, i) => (
+                                    <div key={i} className="text-center p-6">
+                                        <div className="w-14 h-14 mx-auto bg-forest/5 rounded-full flex items-center justify-center text-forest mb-5">
+                                            <Icon icon={iconMap[v.icon]} size={24} />
+                                        </div>
+                                        <h3 className="text-xl font-semibold mb-3">{v.title}</h3>
+                                        <p className="text-olive leading-relaxed text-sm md:text-base">{v.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Photo grid */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-6xl mx-auto">
+                                {CRAFT_IMAGES.map((img, i) => (
+                                    <div
+                                        key={i}
+                                        className="relative overflow-hidden rounded-lg aspect-[3/4] group"
+                                    >
+                                        <img
+                                            src={img.src}
+                                            alt={img.alt}
+                                            loading="lazy"
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Vision */}
+                    <section className="py-24 bg-forest text-parchment relative overflow-hidden">
+                        <div className="absolute -left-20 top-10 w-80 h-80 bg-gold/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -right-20 bottom-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
+                        <div className="container mx-auto px-6 relative z-10">
+                            <div className="max-w-3xl mx-auto text-center">
+                                <span className="text-gold font-bold tracking-widest text-xs uppercase mb-3 block">{t.vision.kicker}</span>
+                                <h2 className="text-3xl md:text-5xl font-light mb-8 leading-tight">{t.vision.title}</h2>
+                                <div className="w-16 h-0.5 bg-gold mx-auto mb-8"></div>
+                                <p className="text-parchment/85 text-lg md:text-xl leading-relaxed font-light">{t.vision.body}</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Showroom */}
+                    <section className="py-24 bg-parchment">
+                        <div className="container mx-auto px-6">
+                            <div className="max-w-3xl mx-auto text-center mb-14">
+                                <span className="text-gold font-bold tracking-widest text-xs uppercase mb-3 block">{t.showroom.kicker}</span>
+                                <h2 className="text-3xl md:text-4xl font-light text-forest mb-6">{t.showroom.title}</h2>
+                                <div className="w-16 h-0.5 bg-gold mx-auto mb-8"></div>
+                                <p className="text-olive text-base md:text-lg leading-relaxed mb-4">{t.showroom.p1}</p>
+                                <p className="text-olive text-base md:text-lg leading-relaxed">{t.showroom.p2}</p>
+                            </div>
+
+                            {/* Photo grid */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-6xl mx-auto mb-16">
+                                {SHOWROOM_IMAGES.map((img, i) => (
+                                    <div key={i} className="relative overflow-hidden rounded-lg aspect-[4/3] group">
+                                        <img
+                                            src={img.src}
+                                            alt={img.alt}
+                                            loading="lazy"
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Location + CTA */}
+                            <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto items-stretch">
+                                {/* Map */}
+                                <div className="relative overflow-hidden rounded-2xl shadow-lg aspect-[4/3] md:aspect-auto">
+                                    <iframe
+                                        src={MAP_EMBED}
+                                        title="Ubicación Madeteka"
+                                        className="w-full h-full min-h-[320px] border-0"
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        allowFullScreen
+                                    />
+                                </div>
+
+                                {/* Info panel */}
+                                <div className="bg-white border border-olive/20 rounded-2xl p-8 md:p-10 flex flex-col">
+                                    <div className="flex items-start space-x-3 mb-6">
+                                        <div className="text-gold flex-shrink-0 pt-1">
+                                            <Icon icon={MapPin} size={22} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold tracking-widest uppercase text-olive mb-1">{t.showroom.address_label}</p>
+                                            <p className="text-forest text-base md:text-lg leading-relaxed">{t.showroom.address}</p>
+                                        </div>
+                                    </div>
+
+                                    <a
+                                        href={MAP_LINK}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center justify-center space-x-2 border border-forest/20 text-forest px-6 py-3 rounded-full font-semibold hover:border-forest hover:bg-forest/5 transition-colors mb-4"
+                                    >
+                                        <Icon icon={MapPin} size={18} />
+                                        <span>{t.showroom.map_cta}</span>
+                                    </a>
+
+                                    <a
+                                        href={CAL_URL}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-auto inline-flex items-center justify-center space-x-2 bg-gold text-forest px-6 py-4 rounded-full font-semibold hover:bg-forest hover:text-gold transition-colors shadow-md text-lg"
+                                    >
+                                        <Icon icon={Calendar} size={20} />
+                                        <span>{t.showroom.cal_cta}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* CTA */}
+                    <section className="py-20 bg-parchment border-t border-olive/10 relative overflow-hidden">
+                        <div className="absolute -right-20 -top-20 w-64 h-64 bg-gold/10 rounded-full blur-3xl"></div>
+                        <div className="container mx-auto px-6 relative z-10 text-center">
+                            <h2 className="text-3xl md:text-4xl font-light text-forest mb-4">{t.cta.title}</h2>
+                            <p className="text-olive mb-10 max-w-xl mx-auto">{t.cta.desc}</p>
+                            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                                <a
+                                    href="https://wa.me/50432945241?text=Hola,%20vi%20su%20pagina%20Sobre%20Nosotros.%20Me%20interesa%20una%20puerta."
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-forest text-white px-8 py-4 rounded-full font-semibold hover:bg-mahogany transition-colors shadow-lg flex items-center space-x-3 w-full sm:w-auto justify-center"
+                                >
+                                    <Icon icon={WhatsAppIcon} size={22} />
+                                    <span>{t.cta.wa}</span>
+                                </a>
+                                <a
+                                    href="/cotizar"
+                                    className="border-2 border-forest text-forest px-8 py-4 rounded-full font-semibold hover:bg-forest hover:text-white transition-colors flex items-center space-x-3 w-full sm:w-auto justify-center"
+                                >
+                                    <Icon icon={ArrowRight} size={20} />
+                                    <span>{t.cta.quote}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="bg-forest text-parchment/60 py-12 border-t border-parchment/10">
+                        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                            <a href="/" className="w-40">
+                                <img
+                                    src="/Logos/Logo-Horizontal-Blanco-Madeteka.png"
+                                    alt="Madeteka"
+                                    className="w-full h-auto brightness-0 invert opacity-90"
+                                />
+                            </a>
+
+                            <div className="flex space-x-6 text-sm font-medium">
+                                <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">Instagram</a>
+                                <a href="http://facebook.com/lamadeteka" target="_blank" className="hover:text-gold transition-colors">Facebook</a>
+                                <a href="https://wa.me/50432945241" target="_blank" className="hover:text-gold transition-colors">WhatsApp</a>
+                            </div>
+
+                            <div className="text-xs text-center md:text-right space-y-1">
+                                <p>&copy; {new Date().getFullYear()} Madeteka. {t.footer.rights}</p>
+                                <p><span className="font-semibold">{t.footer.office_label}</span> {t.footer.office}</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
