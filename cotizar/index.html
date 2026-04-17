@@ -917,6 +917,9 @@
                         <a href="/#pricing" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>
                             {lang === 'es' ? 'Precios' : 'Pricing'}
                         </a>
+                        <a href="/sobre-nosotros" className={`${scrolled ? 'text-forest' : 'text-parchment'} hover:text-gold transition-colors font-medium text-sm tracking-wide`}>
+                            {lang === 'es' ? 'Sobre Nosotros' : 'About Us'}
+                        </a>
                         <span className={`${scrolled ? 'text-gold' : 'text-gold'} font-semibold text-sm tracking-wide`}>{t.nav_quote}</span>
                         <button onClick={toggleLang} className={`flex items-center space-x-1 transition-colors ${scrolled ? 'text-olive' : 'text-parchment'} hover:text-gold`}>
                             <Icon icon={GlobeIcon} size={18} />
@@ -933,6 +936,7 @@
                     <div className="absolute top-full left-0 w-full bg-parchment shadow-lg md:hidden flex flex-col items-center py-8 space-y-6 border-t border-olive/10">
                         <a href="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{t.nav_home}</a>
                         <a href="/#collection" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{lang === 'es' ? 'Colección' : 'Collection'}</a>
+                        <a href="/sobre-nosotros" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">{lang === 'es' ? 'Sobre Nosotros' : 'About Us'}</a>
                         <span className="text-lg font-medium text-gold">{t.nav_quote}</span>
                         <button onClick={toggleLang} className="flex items-center space-x-2 text-olive border px-4 py-1 rounded-full border-olive/30">
                             <Icon icon={GlobeIcon} size={16} />
