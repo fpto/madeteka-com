@@ -68,6 +68,7 @@
         }
         html {
             scroll-behavior: smooth;
+            scroll-padding-top: 96px;
         }
         .fade-in {
             animation: fadeIn 0.8s ease-in-out both;
@@ -120,7 +121,8 @@
                 hero: {
                     kicker: "Sobre Nosotros",
                     title: "Puertas hechas a mano, con la calma de un oficio que no se apresura.",
-                    subtitle: "Somos Madeteka: nuestro equipo de maestros ebanistas se enorgullece de llevar la caoba hondureña de los talleres de Olanchito a los hogares de toda Honduras.",
+                    subtitle: "Cada puerta fabricada en nuestros talleres en Olanchito, Yoro, y lista para que la conozca en nuestra sala de ventas en San Pedro Sula.",
+                    showroom_cta: "Visitar la sala de ventas",
                 },
                 craft: {
                     kicker: "Nuestro Oficio",
@@ -185,7 +187,8 @@
                 hero: {
                     kicker: "About Us",
                     title: "Handmade doors, built with the calm of a craft that refuses to rush.",
-                    subtitle: "We are Madeteka: our team of master woodworkers takes pride in bringing Honduran mahogany from our workshops in Olanchito to homes across the country."
+                    subtitle: "Every door crafted at our workshops in Olanchito, Yoro, and ready for you to see at our showroom in San Pedro Sula.",
+                    showroom_cta: "Visit our showroom"
                 },
                 craft: {
                     kicker: "Our Craft",
@@ -361,6 +364,15 @@
                             <p className="text-lg md:text-xl text-parchment/80 max-w-2xl mx-auto font-light fade-in" style={{animationDelay: '0.3s'}}>
                                 {t.hero.subtitle}
                             </p>
+                            <div className="mt-10 fade-in" style={{animationDelay: '0.45s'}}>
+                                <a
+                                    href="#sala-de-ventas"
+                                    className="inline-flex items-center space-x-2 bg-gold text-forest px-7 py-3 rounded-full font-semibold hover:bg-parchment transition-colors shadow-md"
+                                >
+                                    <Icon icon={MapPin} size={18} />
+                                    <span>{t.hero.showroom_cta}</span>
+                                </a>
+                            </div>
                         </div>
                     </header>
 
@@ -422,7 +434,7 @@
                     </section>
 
                     {/* Showroom */}
-                    <section className="py-24 bg-parchment">
+                    <section id="sala-de-ventas" className="py-24 bg-parchment scroll-mt-24">
                         <div className="container mx-auto px-6">
                             <div className="max-w-3xl mx-auto text-center mb-14">
                                 <span className="text-gold font-bold tracking-widest text-xs uppercase mb-3 block">{t.showroom.kicker}</span>
